@@ -1,0 +1,62 @@
+Packet types:
+ 1. Command + {get,set}
+    Format: "Type:01 NodeID:02 CommandID:06 Data:00 Parity:03"
+
+ 2. Command + {ack,reply}
+    Format: "Type:02 NodeID:02 CommandID:06 Data:05 Parity:05"
+
+ 3. Data request + {payload} (requests correspond to type4 packets)
+    Format: "Type:03 NodeID:02 SensorID:04 Data:00 Parity:05"
+
+ 4. Data + {payload}
+    Format: "Type:04 NodeID:02 SensorID:04 Data:05 Parity:07"
+
+ 5. Aggregated data + {array payload}
+    Format: "Type:05 NodeID:02 SensorID:04 Data:0102030405 Parity:02"
+
+
+Old info below!!
+
+Sensor Pakket:
+--------------
+
+  Voorbeeld:
+    TY0NI1SI1VA25PAxx : Sensor pakket, van node 1, afstandsensor, 25 cm
+    TY0NI1SI8VA32PAxx : Sensor pakket, van node 1, temperatuurssensor, 32 graden
+    TY0NI1SI32VA25.32.70PAxx : Sensor pakket, van node 1, 25 cm, 32 graden, 70% vocht 
+
+  SI: Sensor ID
+    0: state
+    1: afstand
+    8: temperatuur
+    16: vochtigheid
+    32: composite sensordata: afstand.temperatuur.vochtigheid
+
+  VA: Value: de sensordata: tussen 0 en 255
+  
+  States:
+    0: Initialising system
+    1: Started
+    2: Stopped
+    3: Motor running
+    4: Motor stopped
+    5: Error
+    6: Lost uplink
+
+  PA: Parity
+
+Commando Pakket:
+----------------
+
+  Voorbeeld:
+    TY1NI0CM0 : Commando pakket, voor node 0, stop motor
+    TY1NI1CM2VA50 : Commando pakket, voor node 1, set motorspeed 50%
+
+  CM:
+    0: Stop motor
+    1: Start motor
+    2: Set motorspeed + payload (0 - 100 %)
+    3: Set sensor samplerate + payload (100 ms - 10 s)
+    4: Set upload rate + payload (1 s -> 100 s) ?
+    5:
+ 
