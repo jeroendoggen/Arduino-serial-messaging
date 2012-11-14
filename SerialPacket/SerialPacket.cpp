@@ -33,42 +33,132 @@ SerialPacket::SerialPacket()
 }
 
 /// <summary>
-/// Begin variables: default values:
+/// Begin using default settings:
+///  - speed: 115200 baud
 ///  - nodeID: 0
-///  - sensorID: 0
-///  - packetType: 0
 /// </summary>
 void SerialPacket::begin()
 {
-  begin (115200,0,0,0,0);
+  begin (115200,0);                               //TODO put baudrates in defines.h
 }
 
 /// <summary>
 /// Begin using custom settings
 /// </summary>
-void SerialPacket::begin(long speed, uint8_t type, uint8_t nodeID, uint8_t sensorID, uint8_t commandID)
+void SerialPacket::begin(long speed, uint8_t nodeID)
 {
   Serial.begin(speed);
-  setPacketType(type);
   setNodeID(nodeID);
-  setSensorID(sensorID);
+}
+
+/// <summary>
+/// Send a single command
+/// </summary>
+void SerialPacket::sendCommand(uint8_t commandID, uint8_t payload)
+{
+  setPacketType(COMMAND);
   setCommandID(commandID);
+  sendPacket(payload);
 }
 
 /// <summary>
-/// Set nodeID
+/// Send a single command, reuses commandID from previous packets
 /// </summary>
-void SerialPacket::setNodeID(uint8_t nodeID)
+void SerialPacket::sendCommand(uint8_t payload)
 {
-  _nodeID=nodeID;
+  setPacketType(COMMAND);
+  sendPacket(payload);
 }
 
 /// <summary>
-/// Set sensorID
+/// Send a reply to a command
 /// </summary>
-void SerialPacket::setSensorID(uint8_t sensorID)
+void SerialPacket::sendCommandReply(uint8_t commandID, uint8_t payload)
 {
-  _sensorID=sensorID;
+  setPacketType(COMMAND_REPLY);
+  setCommandID(commandID);
+  sendPacket(payload);
+}
+
+/// <summary>
+/// Request a single data value
+/// </summary>
+void SerialPacket::sendDataRequest(uint8_t sensorID, uint8_t payload)
+{
+  setPacketType(DATA_REQUEST);
+  setSensorID(sensorID);
+  sendPacket(payload);
+}
+
+/// <summary>
+/// Send a single data value
+/// </summary>
+void SerialPacket::sendData(uint8_t sensorID, uint8_t payload)
+{
+  setPacketType(DATA);
+  setSensorID(sensorID);
+  sendPacket(payload);
+}
+
+/// <summary>
+/// Send a single data value, reuses sensorID from previous packets
+/// </summary>
+void SerialPacket::sendData(uint8_t payload)
+{
+  setPacketType(DATA);
+  sendPacket(payload);
+}
+
+/// <summary>
+/// Send out the actual data packet (called from other 'send' functions)
+/// </summary>
+void SerialPacket::sendPacket(uint8_t payload)
+{
+  _parity=_packetType^_nodeID^_sensorID^payload;
+  Serial.print("T");
+  hexPrinting(_packetType);
+  Serial.print("N");
+  hexPrinting(_nodeID);
+  if (_packetType == COMMAND | _packetType == COMMAND_REPLY)
+  {
+    Serial.print("C");
+    hexPrinting(_commandID);
+  }
+  else if (_packetType == DATA | _packetType == DATA_REQUEST)
+  {
+    Serial.print("S");
+    hexPrinting(_sensorID);
+  }
+  Serial.print("D");
+  hexPrinting(payload);
+  Serial.print("P");
+  hexPrinting(_parity);
+  Serial.println("");
+}
+
+/// <summary>
+/// Send multiple data samples in one packet by passing an array and its length
+/// </summary>
+void SerialPacket::sendDataArray(uint8_t *dataArray, uint8_t length)
+{
+  setSensorID(length);                            //sensorID contains the length of the data array (can be used at receiving side)
+  _parity=_packetType^_nodeID^_sensorID;
+  Serial.print("T");
+  hexPrinting(_packetType);
+  Serial.print("N");
+  hexPrinting(_nodeID);
+  Serial.print("S");
+  hexPrinting(_sensorID);
+  Serial.print("D");
+
+  for(int i=0 ; i<length ; i++)
+  {
+    hexPrinting(dataArray[i]);
+    _parity=_parity^dataArray[i];
+  }
+  Serial.print("P");                              // does this work ok with arrays? not validated by hand
+  hexPrinting(_parity);
+  Serial.println("");
 }
 
 /// <summary>
@@ -92,124 +182,25 @@ void SerialPacket::setPacketType(uint8_t type)
 /// </summary>
 void SerialPacket::hexPrinting(uint8_t data)
 {
-  if(data<16){
-    Serial.print(0, HEX); 
+  if(data<16)
+  {
+    Serial.print(0, HEX);
   }
   Serial.print(data, HEX);
 }
 
 /// <summary>
-/// Send a single sample in a packet
+/// Set nodeID
 /// </summary>
-void SerialPacket::sendPacket(uint8_t payload)
+void SerialPacket::setNodeID(uint8_t nodeID)
 {
-
-#ifdef SERIAL_ASCII
-  switch (_packetType)
-  {
-    case DATAPACKET:
-    case DATAREQUESTPACKET:
-      _parity=_packetType^_nodeID^_sensorID^payload;
-      Serial.print("Type:");
-      hexPrinting(_packetType);
-      Serial.print(" NodeID:");
-      hexPrinting(_nodeID);
-      Serial.print(" SensorID:");
-      hexPrinting(_sensorID);
-      Serial.print(" Data:");
-      hexPrinting(payload);   //sensor data
-      Serial.print(" Parity:");
-      hexPrinting(_parity);
-      Serial.println("");
-      break;
-    case COMMANDPACKET:  // currently the same code is executed for both options
-    case COMMANDREPLY:
-      _parity=_packetType^_nodeID^_commandID^payload;
-      Serial.print("Type:");
-      hexPrinting(_packetType);
-      Serial.print(" NodeID:");
-      hexPrinting(_nodeID);
-      Serial.print(" CommandID:");
-      hexPrinting(_commandID);                       //command
-      Serial.print(" Data:");
-      hexPrinting(payload);   //data
-      Serial.print(" Parity:");
-      hexPrinting(_parity);
-      Serial.println("");
-      break;
-  }
-#endif
-#ifdef SERIAL_BINARY
-  switch (_packetType)
-  {
-    case DATAPACKET:
-      _parity=_packetType^_nodeID^_sensorID^payload;
-      Serial.write(_packetType);
-      Serial.write(_nodeID);
-      Serial.write(_sensorID);
-      Serial.write(payload);                       //data
-      Serial.write(_parity);
-      break;
-    case COMMANDPACKET:  // currently the same code is executed for both options
-    case COMMANDREPLY:
-      _parity=_packetType^_nodeID^_commandID^payload;
-      Serial.write(_packetType);
-      Serial.write(_nodeID);
-      Serial.write(_commandID);      
-      Serial.write(payload);                       //command
-      Serial.write(_parity);
-      break;
-  }
-#endif
+  _nodeID=nodeID;
 }
 
 /// <summary>
-/// Send multiple data samples in one packet by passing an array and its length
+/// Set sensorID
 /// </summary>
-void SerialPacket::sendPacket(uint8_t *dataArray, uint8_t length)
+void SerialPacket::setSensorID(uint8_t sensorID)
 {
-#ifdef SERIAL_ASCII
-  switch (_packetType)
-  {
-    case AGGREGATEDDATA:
-      setSensorID(length);
-      _parity=_packetType^_nodeID^_sensorID;
-      Serial.print("Type:");
-      hexPrinting(_packetType);
-      Serial.print(" NodeID:");
-      hexPrinting(_nodeID);
-      Serial.print(" SensorID:");
-      hexPrinting(_sensorID);
-      Serial.print(" Data:");
-      for(int i=0 ; i<length ; i++)
-      {
-        hexPrinting(dataArray[i]);
-        _parity=_parity^dataArray[i];
-      }
-      Serial.print(" Parity:");                   // does this work ok with arrays? not validated by hand
-      hexPrinting(_parity);
-      Serial.println("");
-      break;
-    default:
-      Serial.print("ERROR: don't print arrays in command mode!");
-  }
-#endif
-#ifdef SERIAL_BINARY
-  switch (_packetType)
-  {
-    case AGGREGATEDDATA:
-      setSensorID(length);
-      _parity=_packetType^_nodeID^_sensorID;
-      Serial.write(_packetType);
-      Serial.write(_nodeID);
-      Serial.write(_sensorID);
-      for(int i=0 ; i<length ; i++)
-      {
-        Serial.write(dataArray[i]);
-        _parity=_parity^dataArray[i];
-      }
-      Serial.write(_parity);
-      break;
-  }
-#endif
+  _sensorID=sensorID;
 }

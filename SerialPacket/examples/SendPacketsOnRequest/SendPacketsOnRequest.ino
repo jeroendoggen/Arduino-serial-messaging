@@ -1,6 +1,6 @@
 // SendPacketsOnRequest.ino - Demo application to send packet data when requested by the host
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
-// 
+//
 // Program flow:
 //    - ...
 // Options:
@@ -23,21 +23,24 @@ uint8_t dataArray2[10]={0,1,2,3,4,5,6,7,8,9};
 
 void setup()
 {
-  Packet.begin(115200,0,2,4);     //begin(speed,type,nodeID,sensorID);
-  Packet.setPacketType(DATAPACKET);     //data packets
+  Packet.begin(115200,0,2,4);                     //begin(speed,type,nodeID,sensorID);
+  Packet.setPacketType(DATAPACKET);               //data packets
 }
 
 void loop()
 {
-  if (Serial.available() > 0) {
+  if (Serial.available() > 0)
+  {
     char inByte = Serial.read();
-    if (inByte == '1'){
+    if (inByte == '1')
+    {
       Packet.sendPacket(sensorValue);
       Packet.sendPacket(sensorValue*2);
-      }
-     if (inByte == '1'){
+    }
+    if (inByte == '1')
+    {
       Packet.sendPacket(sensorValue);
       Packet.sendPacket(sensorValue*2);
       sensorValue++;
+    }
   }
-} 

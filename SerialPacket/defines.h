@@ -3,8 +3,8 @@
 #define SERIAL_ASCII
 //#define SERIAL_BINARY
 
-#define COMMANDPACKET     1
-#define COMMANDREPLY      2
-#define DATAREQUESTPACKET 3
-#define DATAPACKET        4
-#define AGGREGATEDDATA    5
+#define COMMAND       1
+#define COMMAND_REPLY 2
+#define DATA_REQUEST  3
+#define DATA          4
+#define DATA_ARRAY    5

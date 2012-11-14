@@ -13,6 +13,6 @@ void loop()
 {
   distance = Dist.getDistanceTime();
   Serial.print("\nRound trip time (microseconds)): ");
-  Serial.print(distance);  
-  delay(500); //make it readable
+  Serial.print(distance);
+  delay(500);                                     //make it readable
 }
