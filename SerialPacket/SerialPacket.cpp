@@ -112,7 +112,7 @@ void SerialPacket::sendData(uint8_t payload)
 /// <summary>
 /// Send out the actual data packet (called from other 'send' functions)
 /// </summary>
-void SerialPacket::sendPacket(uint8_t payload)
+void SerialPacket::sendPacket(uint8_t& payload)
 {
   _parity=_packetType^_nodeID^_sensorID^payload;
   Serial.print("T");
@@ -164,7 +164,7 @@ void SerialPacket::sendDataArray(uint8_t *dataArray, uint8_t length)
 /// <summary>
 /// Set commandID
 /// </summary>
-void SerialPacket::setCommandID(uint8_t commandID)
+void SerialPacket::setCommandID(uint8_t& commandID)
 {
   _commandID=commandID;
 }
@@ -180,7 +180,7 @@ void SerialPacket::setPacketType(uint8_t type)
 /// <summary>
 /// HexPrinting: helper function to print data with a constant field width (2 hex values)
 /// </summary>
-void SerialPacket::hexPrinting(uint8_t data)
+void SerialPacket::hexPrinting(uint8_t& data)
 {
   if(data<16)
   {
@@ -192,7 +192,7 @@ void SerialPacket::hexPrinting(uint8_t data)
 /// <summary>
 /// Set nodeID
 /// </summary>
-void SerialPacket::setNodeID(uint8_t nodeID)
+void SerialPacket::setNodeID(uint8_t& nodeID)
 {
   _nodeID=nodeID;
 }
@@ -200,7 +200,7 @@ void SerialPacket::setNodeID(uint8_t nodeID)
 /// <summary>
 /// Set sensorID
 /// </summary>
-void SerialPacket::setSensorID(uint8_t sensorID)
+void SerialPacket::setSensorID(uint8_t& sensorID)
 {
   _sensorID=sensorID;
 }

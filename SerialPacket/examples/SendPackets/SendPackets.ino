@@ -16,60 +16,57 @@
 
 SerialPacket Packet;
 
-uint8_t sensorValue=0;
-uint8_t commandValue=0;
+uint8_t sensorID=0;
+uint8_t commandID=0;
+
+uint8_t payload=0;
+
 uint8_t counter=0;
 
 uint8_t dataArray1[5]={0,1,2,3,4};
 uint8_t dataArray2[10]={0,1,2,3,4,5,6,7,8,9};
 
-#define MYCOMMAND1 1
-#define MYCOMMAND2 1
-
-#define MYDATA1 1
-#define MYDATA2 1
-
 void setup()
 {
-  Packet.begin(115200,0);                         //begin(speed,nodeID,sensorID);
+  Packet.begin(115200,0);                         //begin(speed,nodeID);
 }
 
 void loop()
 {
   if(counter < 1)
   {
-    Packet.sendCommand(MYCOMMAND1, commandValue);
-    commandValue++;
+    Packet.sendCommand(10, payload);
+    payload++;
   }
 
   if(counter < 3)
   {
-    Packet.sendCommand(commandValue);
-    commandValue++;
+    Packet.sendCommand(payload);
+    payload++;
   }
 
   if(counter > 4 && counter < 10)
   {
-    Packet.sendCommandReply(MYCOMMAND1, commandValue);
-    commandValue++;
+    Packet.sendCommandReply(commandID, payload);
+    payload++;
   }
 
   if(counter > 9 && counter < 15)
   {
-    Packet.sendDataRequest(MYDATA1, sensorValue);
-    sensorValue++;
+    Packet.sendDataRequest(sensorID, payload);
+    payload++;
   }
 
   if(counter > 14 && counter < 20)
   {
-    Packet.sendData(MYDATA1, sensorValue);
-    sensorValue++;
+    Packet.sendData(sensorID, payload);
+    payload++;
   }
 
   if(counter > 20 && counter < 25)
   {
-    Packet.sendData(MYDATA1, sensorValue);
-    sensorValue++;
+    Packet.sendData(sensorID, payload);
+    payload++;
   }
 
 //   if(counter > 19 && counter < 25){

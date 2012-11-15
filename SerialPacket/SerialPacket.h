@@ -54,11 +54,11 @@ class SerialPacket
     uint8_t _commandID;
     uint8_t _parity;
 
-    void hexPrinting(uint8_t data);
-    void sendPacket(uint8_t payload);
+    void sendPacket(uint8_t& payload);
     void setPacketType(uint8_t type);
-    void setCommandID(uint8_t commandID);
-    void setSensorID(uint8_t sensorID);
-    void setNodeID(uint8_t nodeID);
+    void setCommandID(uint8_t& commandID);
+    void setSensorID(uint8_t& sensorID);
+    void setNodeID(uint8_t& nodeID);
+    void hexPrinting(uint8_t& data);
 };
 #endif
