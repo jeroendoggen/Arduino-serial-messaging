@@ -4,6 +4,8 @@
 SerialPacket Packet;
 
 #define SENSORID 2
+int a=32760 ;
+uint8_t b=0;
 
 void setup()
 {
@@ -12,8 +14,17 @@ void setup()
 
 void loop()
 {
-  int a= analogRead(A0);
-  Serial.println(a);
-  Packet.sendData(SENSORID, a >> 2); 
+  
+  /*Serial.println(a);
+  Serial.println(a,HEX);
+  Packet.sendData(SENSORID, a);
+  
+  Serial.println(b);
+  Serial.println(b,HEX);
+  Packet.sendData(SENSORID, b)*/; 
+  
+  Packet.sendDataArrayRequest(10,20);
   delay(1000);         // wait for 100 milliseconds
+  a++;
+  b++;
 }

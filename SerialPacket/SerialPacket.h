@@ -9,8 +9,12 @@
 //   Version 0.5: added 'sendCommand', 'sendData', ... functions (replacing the generic 'sendPacket')
 //                removed condition compilation from v0.3
 //                shortened serial ASCII messages ('Type' -> 'T', 'NodeID' -> 'N')
+//   Version 0.6: Added support for packets with 16-bit payload (renamed packet types -> hex values)
+//                Added "dataArrayRequest" packet
 // Roadmap:
-//   Version 0.6:  ??
+//   Version 0.7: send 16-bit data arrays
+//                Separate classes for commands vs data packets?           
+//   Version 0.8: ??
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -44,7 +48,12 @@ class SerialPacket
 
     void sendDataRequest(uint8_t sensorID, uint8_t payload);
     void sendData(uint8_t sensorID, uint8_t payload);
+    void sendData(uint8_t sensorID, int16_t payload);
+    
     void sendData(uint8_t payload);
+    void sendData(int16_t payload);
+    
+    void sendDataArrayRequest(uint8_t arrayID, uint8_t length);
     void sendDataArray(uint8_t *dataArray, uint8_t length);
 
   private:
@@ -55,10 +64,12 @@ class SerialPacket
     uint8_t _parity;
 
     void sendPacket(uint8_t& payload);
+    void sendPacket(int16_t& payload);
     void setPacketType(uint8_t type);
     void setCommandID(uint8_t& commandID);
     void setSensorID(uint8_t& sensorID);
     void setNodeID(uint8_t& nodeID);
     void hexPrinting(uint8_t& data);
+    void hexPrinting(int16_t& data);
 };
 #endif

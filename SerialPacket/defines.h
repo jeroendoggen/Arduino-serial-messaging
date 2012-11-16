@@ -3,8 +3,12 @@
 #define SERIAL_ASCII
 //#define SERIAL_BINARY
 
-#define COMMAND       1
-#define COMMAND_REPLY 2
-#define DATA_REQUEST  3
-#define DATA          4
-#define DATA_ARRAY    5
+#define COMMAND            0x01
+#define COMMAND_REPLY      0x02
+
+#define DATA_REQUEST       0x11
+#define DATA_BYTE          0x12
+#define DATA_INT           0x13
+
+#define DATA_ARRAY_REQUEST 0x21
+#define DATA_ARRAY         0x22

@@ -91,26 +91,55 @@ void SerialPacket::sendDataRequest(uint8_t sensorID, uint8_t payload)
 }
 
 /// <summary>
+/// Request an array of data values
+/// </summary>
+void SerialPacket::sendDataArrayRequest(uint8_t arrayID, uint8_t payload)
+{
+  setPacketType(DATA_ARRAY_REQUEST);
+  setSensorID(arrayID);
+  sendPacket(payload);
+}
+
+/// <summary>
 /// Send a single data value
 /// </summary>
 void SerialPacket::sendData(uint8_t sensorID, uint8_t payload)
 {
-  setPacketType(DATA);
+  setPacketType(DATA_BYTE);
   setSensorID(sensorID);
   sendPacket(payload);
 }
 
 /// <summary>
-/// Send a single data value, reuses sensorID from previous packets
+/// Send a single data value
 /// </summary>
-void SerialPacket::sendData(uint8_t payload)
+void SerialPacket::sendData(uint8_t sensorID, int16_t payload)
 {
-  setPacketType(DATA);
+  setPacketType(DATA_INT);
+  setSensorID(sensorID);
   sendPacket(payload);
 }
 
 /// <summary>
-/// Send out the actual data packet (called from other 'send' functions)
+/// Send a single 8-bit data value (Arduino 'byte' type), reuses sensorID from previous packets
+/// </summary>
+void SerialPacket::sendData(uint8_t payload)
+{
+  setPacketType(DATA_BYTE);
+  sendPacket(payload);
+}
+
+/// <summary>
+/// Send a single 16-bit data value (Arduino 'int' type), reuses sensorID from previous packets
+/// </summary>
+void SerialPacket::sendData(int16_t payload)
+{
+  setPacketType(DATA_INT);
+  sendPacket(payload);
+}
+
+/// <summary>
+/// Send out the actual 8-bit data packet (called from other 'send' functions)
 /// </summary>
 void SerialPacket::sendPacket(uint8_t& payload)
 {
@@ -124,7 +153,34 @@ void SerialPacket::sendPacket(uint8_t& payload)
     Serial.print("C");
     hexPrinting(_commandID);
   }
-  else if (_packetType == DATA | _packetType == DATA_REQUEST)
+  else if (_packetType == DATA_ARRAY_REQUEST |_packetType == DATA_BYTE | _packetType == DATA_REQUEST)
+  {
+    Serial.print("S");
+    hexPrinting(_sensorID);
+  }
+  Serial.print("D");
+  hexPrinting(payload);
+  Serial.print("P");
+  hexPrinting(_parity);
+  Serial.println("");
+}
+
+/// <summary>
+/// Send out the actual 16-bit data packet (called from other 'send' functions)
+/// </summary>
+void SerialPacket::sendPacket(int16_t& payload)
+{
+  _parity=_packetType^_nodeID^_sensorID^payload;
+  Serial.print("T");
+  hexPrinting(_packetType);
+  Serial.print("N");
+  hexPrinting(_nodeID);
+  if (_packetType == COMMAND | _packetType == COMMAND_REPLY)
+  {
+    Serial.print("C");
+    hexPrinting(_commandID);
+  }
+  else if (_packetType == DATA_ARRAY_REQUEST | _packetType == DATA_INT | _packetType == DATA_REQUEST)  //_packetType == DATA_ARRAY_REQUEST (not yet implemented as a separate function)
   {
     Serial.print("S");
     hexPrinting(_sensorID);
@@ -187,6 +243,26 @@ void SerialPacket::hexPrinting(uint8_t& data)
     Serial.print(0, HEX);
   }
   Serial.print(data, HEX);
+}
+
+/// <summary>
+/// HexPrinting: helper function to print data with a constant field width (2 hex values)
+/// </summary>
+void SerialPacket::hexPrinting(int16_t& data)
+{
+  if(data<4096 && data>0)
+  {
+    Serial.print(0, HEX);
+  }
+  if(data<256 && data>0)
+  {
+    Serial.print(0, HEX);
+  }
+  if(data<16 && data>0)
+  {
+    Serial.print(0, HEX);
+  }
+  Serial.print(uint16_t(data), HEX);  //casting to suppress FFFF for negative int values
 }
 
 /// <summary>
