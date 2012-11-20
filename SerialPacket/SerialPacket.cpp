@@ -25,6 +25,17 @@
 #include "SerialPacket.h"
 #include "defines.h"
 
+// struct _packet
+// {
+//   uint8_t _packetType;
+//   uint8_t _nodeID;
+//   uint8_t _sensorID;
+//   uint8_t _commandID;
+//   uint8_t _parity;
+// };
+// 
+// _packet incomingPacket = { 0 , 0, 0, 0, 0};
+
 /// <summary>
 /// Constructor
 /// </summary>
@@ -49,6 +60,8 @@ void SerialPacket::begin(long speed, uint8_t nodeID)
 {
   Serial.begin(speed);
   setNodeID(nodeID);
+//   incomingPacket.commandID = 2;
+//   outgoingPacket.commandID = 3;
 }
 
 /// <summary>
@@ -148,12 +161,12 @@ void SerialPacket::sendPacket(uint8_t& payload)
   hexPrinting(_packetType);
   Serial.print("N");
   hexPrinting(_nodeID);
-  if (_packetType == COMMAND | _packetType == COMMAND_REPLY)
+  if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY))
   {
     Serial.print("C");
     hexPrinting(_commandID);
   }
-  else if (_packetType == DATA_ARRAY_REQUEST |_packetType == DATA_BYTE | _packetType == DATA_REQUEST)
+  else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_BYTE) | (_packetType == DATA_REQUEST))
   {
     Serial.print("S");
     hexPrinting(_sensorID);
@@ -175,12 +188,12 @@ void SerialPacket::sendPacket(int16_t& payload)
   hexPrinting(_packetType);
   Serial.print("N");
   hexPrinting(_nodeID);
-  if (_packetType == COMMAND | _packetType == COMMAND_REPLY)
+  if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY))
   {
     Serial.print("C");
     hexPrinting(_commandID);
   }
-  else if (_packetType == DATA_ARRAY_REQUEST | _packetType == DATA_INT | _packetType == DATA_REQUEST)  //_packetType == DATA_ARRAY_REQUEST (not yet implemented as a separate function)
+  else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_INT) | (_packetType == DATA_REQUEST))  //_packetType == DATA_ARRAY_REQUEST (not yet implemented as a separate function)
   {
     Serial.print("S");
     hexPrinting(_sensorID);

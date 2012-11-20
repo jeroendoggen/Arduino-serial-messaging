@@ -39,35 +39,35 @@ void loop()
     payload++;
   }
 
-  if(counter < 3)
-  {
-    Packet.sendCommand(payload);
-    payload++;
-  }
+//   if(counter < 3)
+//   {
+//     Packet.sendCommand(payload);
+//     payload++;
+//   }
 
-  if(counter > 4 && counter < 10)
-  {
-    Packet.sendCommandReply(commandID, payload);
-    payload++;
-  }
-
-  if(counter > 9 && counter < 15)
-  {
-    Packet.sendDataRequest(sensorID, payload);
-    payload++;
-  }
-
-  if(counter > 14 && counter < 20)
-  {
-    Packet.sendData(sensorID, payload);
-    payload++;
-  }
-
-  if(counter > 20 && counter < 25)
-  {
-    Packet.sendData(sensorID, payload);
-    payload++;
-  }
+//   if(counter > 4 && counter < 10)
+//   {
+//     Packet.sendCommandReply(commandID, payload);
+//     payload++;
+//   }
+// 
+//   if(counter > 9 && counter < 15)
+//   {
+//     Packet.sendDataRequest(sensorID, payload);
+//     payload++;
+//   }
+// 
+//   if(counter > 14 && counter < 20)
+//   {
+//     Packet.sendData(sensorID, payload);
+//     payload++;
+//   }
+// 
+//   if(counter > 20 && counter < 25)
+//   {
+//     Packet.sendData(sensorID, payload);
+//     payload++;
+//   }
 
 //   if(counter > 19 && counter < 25){
 //     Packet.setPacketType(AGGREGATEDDATA);   //data packets

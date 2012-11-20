@@ -1,3 +1,5 @@
+Old info below!!
+
 Packet types:
 1. Command + {get,set}
 Format: "Type:01 NodeID:02 CommandID:06 Data:00 Parity:03"
@@ -15,7 +17,7 @@ Format: "Type:04 NodeID:02 SensorID:04 Data:05 Parity:07"
 5. Aggregated data + {array payload}
 Format: "Type:05 NodeID:02 SensorID:04 Data:0102030405 Parity:02"
 
-Old info below!!
+Older info below!!
 
 Sensor Pakket:
 --------------
