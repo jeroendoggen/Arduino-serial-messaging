@@ -161,19 +161,18 @@ void SerialPacket::sendPacket(uint8_t& payload)
   hexPrinting(_packetType);
   Serial.print("N");
   hexPrinting(_nodeID);
+  Serial.print("I");
   if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY))
   {
-    Serial.print("C");
     hexPrinting(_commandID);
   }
   else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_BYTE) | (_packetType == DATA_REQUEST))
   {
-    Serial.print("S");
     hexPrinting(_sensorID);
   }
-  Serial.print("D");
-  hexPrinting(payload);
   Serial.print("P");
+  hexPrinting(payload);
+  Serial.print("Q");
   hexPrinting(_parity);
   Serial.println("");
 }
@@ -188,19 +187,18 @@ void SerialPacket::sendPacket(int16_t& payload)
   hexPrinting(_packetType);
   Serial.print("N");
   hexPrinting(_nodeID);
+  Serial.print("I");
   if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY))
   {
-    Serial.print("C");
     hexPrinting(_commandID);
   }
   else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_INT) | (_packetType == DATA_REQUEST))  //_packetType == DATA_ARRAY_REQUEST (not yet implemented as a separate function)
   {
-    Serial.print("S");
     hexPrinting(_sensorID);
   }
-  Serial.print("D");
-  hexPrinting(payload);
   Serial.print("P");
+  hexPrinting(payload);
+  Serial.print("Q");
   hexPrinting(_parity);
   Serial.println("");
 }
@@ -216,16 +214,16 @@ void SerialPacket::sendDataArray(uint8_t *dataArray, uint8_t length)
   hexPrinting(_packetType);
   Serial.print("N");
   hexPrinting(_nodeID);
-  Serial.print("S");
+  Serial.print("I");
   hexPrinting(_sensorID);
-  Serial.print("D");
+  Serial.print("P");
 
   for(int i=0 ; i<length ; i++)
   {
     hexPrinting(dataArray[i]);
     _parity=_parity^dataArray[i];
   }
-  Serial.print("P");                              // does this work ok with arrays? not validated by hand
+  Serial.print("Q");                              // does this work ok with arrays? not validated by hand
   hexPrinting(_parity);
   Serial.println("");
 }
