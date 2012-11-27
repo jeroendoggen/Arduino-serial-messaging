@@ -31,7 +31,7 @@ FILES[3]='examples/ReceivePackets/'
 
 # select the range of file you want to build (from FIRSTFILE up to LASTFILE)
 FIRSTFILE=0
-LASTFILE=2
+LASTFILE=3
 
 ##################################################################  
 # SCRIPT SETTINGS                                               #
@@ -177,7 +177,7 @@ function staticCodeCheck
 
 function staticCodeCheckFile
 {
-  cppcheck $CPPCHECKOPTIONS *.ino > /dev/null
+  cppcheck $CPPCHECKOPTIONS ./build/*.cpp > /dev/null
   if [ $? -eq 0 ] 
     then
       echo "Cppcheck OK in folder: '`pwd | awk -F/ '{print $NF}'`' "

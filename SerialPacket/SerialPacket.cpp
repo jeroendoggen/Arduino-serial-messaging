@@ -39,8 +39,12 @@
 /// <summary>
 /// Constructor
 /// </summary>
-SerialPacket::SerialPacket()
+SerialPacket::SerialPacket() : _inputChar() 
 {
+  _inComingPacketComplete = false;
+  _incomingCounter=0;
+//   _inputChar[0]= 0;
+
 }
 
 /// <summary>
@@ -290,4 +294,94 @@ void SerialPacket::setNodeID(uint8_t& nodeID)
 void SerialPacket::setSensorID(uint8_t& sensorID)
 {
   _sensorID=sensorID;
+}
+
+/// <summary>
+/// Set readSerialData
+/// </summary>
+void SerialPacket::readSerialData()
+{
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    _inputChar[_incomingCounter]=inChar;
+    _incomingCounter++;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      _inComingPacketComplete = true;
+    } 
+  }
+  parseSerialData();
+  printInfo();
+  _incomingCounter=0;
+}
+
+
+/// <summary>
+/// Set parseSerialData
+/// </summary>
+void SerialPacket::parseSerialData()
+{
+  incomingPacket.packetType = hex_to_dec(_inputChar[1])*16 + hex_to_dec(_inputChar[2]);
+  incomingPacket.nodeID = hex_to_dec(_inputChar[4])*16 + hex_to_dec(_inputChar[5]);
+    if ((incomingPacket.packetType == COMMAND) | (incomingPacket.packetType == COMMAND_REPLY))
+    {
+      incomingPacket.sensorID = hex_to_dec(_inputChar[7])*16 + hex_to_dec(_inputChar[8]);
+      _checkedParity = incomingPacket.packetType^incomingPacket.nodeID^incomingPacket.sensorID^incomingPacket.payload; 
+    }
+    else if ((incomingPacket.packetType == DATA_INT) | (incomingPacket.packetType == DATA_BYTE) | (incomingPacket.packetType == DATA_REQUEST))
+    {
+      incomingPacket.commandID = hex_to_dec(_inputChar[7])*16 + hex_to_dec(_inputChar[8]);;
+      _checkedParity = incomingPacket.packetType^incomingPacket.nodeID^incomingPacket.commandID^incomingPacket.payload;
+    }
+   incomingPacket.payload = hex_to_dec(_inputChar[10])*16 + hex_to_dec(_inputChar[11]);
+   incomingPacket.parity = hex_to_dec(_inputChar[13])*16 + hex_to_dec(_inputChar[14]);
+}
+
+/// <summary>
+/// Convert HEX to Decimal
+/// </summary>
+#define HEX_DEC_ERROR 42 
+uint8_t SerialPacket::hex_to_dec(uint8_t in) 
+{ 
+   if(((in >= '0') && (in <= '9'))) return in-'0'; 
+   in |= 0x20; 
+   if(((in >= 'a') && (in <= 'f'))) return in-'a' + 10; 
+   return HEX_DEC_ERROR; 
+}
+
+
+/// <summary>
+/// Convert HEX to Decimal
+/// </summary>
+void SerialPacket::printInfo() 
+{
+    for(int i=0;i<_incomingCounter;i++)
+    {
+      Serial.print(_inputChar[i]);
+    }
+    Serial.print("Type: ");
+    Serial.println(incomingPacket.packetType);
+    Serial.print("NodeID: ");
+    Serial.println(incomingPacket.nodeID);
+    Serial.print("SensorID: ");
+    Serial.println(incomingPacket.sensorID);
+    Serial.print("CommandID ");
+    Serial.println(incomingPacket.commandID);
+    Serial.print("Payload: ");
+    Serial.println(incomingPacket.payload);
+    Serial.print("Parity: ");
+    Serial.println(incomingPacket.parity);
+    
+    Serial.println(_checkedParity);
+    
+    if(_parity == _checkedParity)      //TODO: This does not work??? why? (variable types?)
+    {
+      Serial.println("Parity check ok");
+    }
+    else 
+    {
+      Serial.println("Parity error");
+    }
 }
