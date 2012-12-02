@@ -38,7 +38,7 @@ begin
 
     # collectd data and print the values
     data = `cat /usr/lib/collectd/plugins/arduino_temperature.log`   # get 5-minute load average
-    puts("PUTVAL #{hostname}/#{PLUGIN_NAME}/gauge-5_minute_load #{start_run}:#{data}")
+    puts("PUTVAL #{hostname}/#{PLUGIN_NAME}/gauge-temperature #{start_run}:#{data}")
 
     # sleep to make the interval
     while((time_left = (next_run - Time.now.to_i)) > 0) do
