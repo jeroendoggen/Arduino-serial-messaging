@@ -12,3 +12,10 @@
 
 #define DATA_ARRAY_REQUEST 0x21
 #define DATA_ARRAY         0x22
+
+/// Sensor Types:
+
+#define TEMPERATURE 0x10
+#define HUMIDITY    0x11
+
+#define DISTANCE    0x30

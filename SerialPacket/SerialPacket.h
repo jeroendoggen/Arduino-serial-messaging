@@ -13,9 +13,9 @@
 //                Added "dataArrayRequest" packet
 //   Version 0.7: processing incoming packets
 // Roadmap:
-//   Version 0.8: send 16-bit data arrays
+//   Version 0.7: send 16-bit data arrays
 //                Separate classes for commands vs data packets?           
-//   Version 0.9: ??
+//   Version 0.8: ??
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -94,5 +94,6 @@ class SerialPacket
     uint8_t hex_to_dec(uint8_t in);
     void parseSerialData();
     void printInfo();
+    boolean checkParity();
 };
 #endif

@@ -16,8 +16,8 @@ void setup() {
 }
 
 void loop() {
-   delay(1000);
-   Packet.sendData(1,uint8_t(6));
+   delay(500);
+//    Packet.sendData(1,uint8_t(6));
 }
 
 /*

@@ -33,11 +33,11 @@ void setup()
 
 void loop()
 {
-  if(counter < 1)
-  {
-    Packet.sendCommand(10, payload);
-    payload++;
-  }
+//   if(counter < 1)
+//   {
+//     Packet.sendCommand(10, payload);
+//     payload++;
+//   }
 
 //   if(counter < 3)
 //   {
@@ -63,11 +63,11 @@ void loop()
 //     payload++;
 //   }
 // 
-//   if(counter > 20 && counter < 25)
-//   {
-//     Packet.sendData(sensorID, payload);
-//     payload++;
-//   }
+  if(counter > 20 && counter < 25)
+  {
+    Packet.sendData(sensorID, payload);
+    payload++;
+  }
 
 //   if(counter > 19 && counter < 25){
 //     Packet.setPacketType(AGGREGATEDDATA);   //data packets
