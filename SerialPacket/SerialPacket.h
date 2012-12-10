@@ -60,6 +60,8 @@ class SerialPacket
     void sendDataArray(uint8_t *dataArray, uint8_t length);
     
     void readSerialData();
+    uint8_t getCommandID();
+    uint8_t getPayload();
 
   private:
     struct packet

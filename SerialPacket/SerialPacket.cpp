@@ -392,3 +392,21 @@ boolean SerialPacket::checkParity()
       return(false);
     }
 }
+
+/// <summary>
+/// Get commandID
+/// </summary>
+uint8_t SerialPacket::getCommandID()
+{
+    return incomingPacket.commandID;
+}
+
+/// <summary>
+/// Get commandID
+/// </summary>
+uint8_t SerialPacket::getPayload()
+{
+    return incomingPacket.payload;
+}
+
+
