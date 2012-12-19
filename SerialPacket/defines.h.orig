@@ -3,8 +3,6 @@
 #define SERIAL_ASCII
 //#define SERIAL_BINARY
 
-//#define DEBUG_SERIAL
-
 #define COMMAND            0x01
 #define COMMAND_REPLY      0x02
 
@@ -21,7 +19,6 @@
 #define HUMIDITY    0x11
 
 #define DISTANCE    0x30
-#define MOTORSTATUS 0x50
 
 /// Command IDs
 

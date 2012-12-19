@@ -33,60 +33,58 @@ void setup()
 
 void loop()
 {
-//   if(counter < 1)
-//   {
-//     Packet.sendCommand(10, payload);
-//     payload++;
-//   }
+  //   if(counter < 1)
+  //   {
+  //     Packet.sendCommand(10, payload);
+  //     payload++;
+  //   }
 
-//   if(counter < 3)
-//   {
-//     Packet.sendCommand(payload);
-//     payload++;
-//   }
+  //   if(counter < 3)
+  //   {
+  //     Packet.sendCommand(payload);
+  //     payload++;
+  //   }
 
-//   if(counter > 4 && counter < 10)
-//   {
-//     Packet.sendCommandReply(commandID, payload);
-//     payload++;
-//   }
-// 
-//   if(counter > 9 && counter < 15)
-//   {
-//     Packet.sendDataRequest(sensorID, payload);
-//     payload++;
-//   }
-// 
-//   if(counter > 14 && counter < 20)
-//   {
-//     Packet.sendData(sensorID, payload);
-//     payload++;
-//   }
-// 
-  if(counter > 20 && counter < 25)
-  {
+  //   if(counter > 4 && counter < 10)
+  //   {
+  //     Packet.sendCommandReply(commandID, payload);
+  //     payload++;
+  //   }
+  //
+  //   if(counter > 9 && counter < 15)
+  //   {
+  //     Packet.sendDataRequest(sensorID, payload);
+  //     payload++;
+  //   }
+  //
+  //   if(counter > 14 && counter < 20)
+  //   {
+  //     Packet.sendData(sensorID, payload);
+  //     payload++;
+  //   }
+  //
+  if(counter > 20 && counter < 25) {
     Packet.sendData(sensorID, payload);
     payload++;
   }
 
-//   if(counter > 19 && counter < 25){
-//     Packet.setPacketType(AGGREGATEDDATA);   //data packets
-//     Packet.sendPacket(dataArray1,sizeof(dataArray1));
-//     for(int i=0;i<sizeof(dataArray1);i++){
-//       dataArray1[i]++;
-//     }
-//   }
-//
-//   if(counter > 24 && counter < 30){
-//     Packet.setPacketType(AGGREGATEDDATA);   //data packets
-//     Packet.sendPacket(dataArray2,sizeof(dataArray2));
-//     for(int i=0;i<sizeof(dataArray2);i++){
-//       dataArray2[i]++;
-//     }
-//   }
+  //   if(counter > 19 && counter < 25){
+  //     Packet.setPacketType(AGGREGATEDDATA);   //data packets
+  //     Packet.sendPacket(dataArray1,sizeof(dataArray1));
+  //     for(int i=0;i<sizeof(dataArray1);i++){
+  //       dataArray1[i]++;
+  //     }
+  //   }
+  //
+  //   if(counter > 24 && counter < 30){
+  //     Packet.setPacketType(AGGREGATEDDATA);   //data packets
+  //     Packet.sendPacket(dataArray2,sizeof(dataArray2));
+  //     for(int i=0;i<sizeof(dataArray2);i++){
+  //       dataArray2[i]++;
+  //     }
+  //   }
 
-  if(counter == 30)
-  {
+  if(counter == 30) {
     counter = -1;                                 //reset counter
   }
 

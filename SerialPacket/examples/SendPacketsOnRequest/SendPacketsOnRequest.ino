@@ -5,7 +5,7 @@
 //    - Program waits for input from the user
 //    - When the user sends: (over the serial port)
 //       -- the number '1' --> reply= data packet with sensorvalue=1
-//       -- the number '2' --> reply= data packet with sensorvalue=2 
+//       -- the number '2' --> reply= data packet with sensorvalue=2
 //       -- the letter 'a' --> reply= command packet with commandValue=1
 //       -- the letter 'b' --> reply= command packet with commandValue=2
 
@@ -25,32 +25,27 @@ uint8_t commandValue=1;
 
 void setup()
 {
-  Packet.begin(115200,0);                     //begin(speed,nodeID);
+  Packet.begin(115200,0);                         //begin(speed,nodeID);
 }
 
 void loop()
 {
-  if (Serial.available() > 0)
-  {
+  if (Serial.available() > 0) {
     char inByte = Serial.read();
-    
-    if (inByte == '1')
-    {
+
+    if (inByte == '1') {
       Packet.sendData(sensorValue);
     }
-    
-    if (inByte == '2')
-    {
+
+    if (inByte == '2') {
       Packet.sendData(sensorValue*2);
     }
-    
-    if (inByte == 'a')
-    {
+
+    if (inByte == 'a') {
       Packet.sendCommand(commandValue);
     }
-    
-    if (inByte == 'b')
-    {
+
+    if (inByte == 'b') {
       Packet.sendCommand(commandValue*2);
     }
   }
