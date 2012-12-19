@@ -14,7 +14,7 @@
 //   Version 0.7: processing incoming packets
 // Roadmap:
 //   Version 0.7: send 16-bit data arrays
-//                Separate classes for commands vs data packets?           
+//                Separate classes for commands vs data packets?
 //   Version 0.8: ??
 //
 // This library is free software; you can redistribute it and/or
@@ -35,13 +35,11 @@
 #define SerialPacket_h
 #include <Arduino.h>
 
-
-
 class SerialPacket
 {
   public:
     SerialPacket();
-    
+
     void begin();
     void begin(long speed, uint8_t nodeID);
 
@@ -52,14 +50,14 @@ class SerialPacket
     void sendDataRequest(uint8_t sensorID, uint8_t payload);
     void sendData(uint8_t sensorID, uint8_t payload);
     void sendData(uint8_t sensorID, int16_t payload);
-    
+
     void sendData(uint8_t payload);
     void sendData(int16_t payload);
-    
+
     void sendDataArrayRequest(uint8_t arrayID, uint8_t length);
     void sendDataArray(uint8_t *dataArray, uint8_t length);
-    
-    void readSerialData();
+
+    boolean readSerialData();
     uint8_t getCommandID();
     uint8_t getPayload();
 
@@ -72,7 +70,7 @@ class SerialPacket
       uint8_t commandID;
       uint8_t payload;
       uint8_t parity;
-    } incomingPacket, outgoingPacket;  //TODO: also use this struct to send packets?
+    } incomingPacket, outgoingPacket;             //TODO: also use this struct to send packets? (todo underscore)
 
     uint8_t _packetType;
     uint8_t _nodeID;
@@ -80,11 +78,11 @@ class SerialPacket
     uint8_t _commandID;
     uint8_t _parity;
     uint8_t _checkedParity;
-    
+
     boolean _inComingPacketComplete;
     char _inputChar[20];
     uint8_t _incomingCounter;
-    
+
     void sendPacket(uint8_t& payload);
     void sendPacket(int16_t& payload);
     void setPacketType(uint8_t type);
@@ -94,8 +92,9 @@ class SerialPacket
     void hexPrinting(uint8_t& data);
     void hexPrinting(int16_t& data);
     uint8_t hex_to_dec(uint8_t in);
-    void parseSerialData();
+    boolean parseSerialData();
     void printInfo();
     boolean checkParity();
+    boolean newPacket;
 };
 #endif

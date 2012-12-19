@@ -25,26 +25,20 @@
 #include "SerialPacket.h"
 #include "defines.h"
 
-// struct _packet
-// {
-//   uint8_t _packetType;
-//   uint8_t _nodeID;
-//   uint8_t _sensorID;
-//   uint8_t _commandID;
-//   uint8_t _parity;
-// };
-// 
-// _packet incomingPacket = { 0 , 0, 0, 0, 0};
-
 /// <summary>
 /// Constructor
 /// </summary>
-SerialPacket::SerialPacket() : _inputChar() 
+SerialPacket::SerialPacket() : _inputChar()
 {
   _inComingPacketComplete = false;
   _incomingCounter=0;
-//   _inputChar[0]= 0;
-
+  incomingPacket.packetType=0;
+  incomingPacket.nodeID=0;
+  incomingPacket.sensorID=0;
+  incomingPacket.commandID=0;
+  incomingPacket.payload=0;
+  incomingPacket.parity=0;
+  newPacket = false;
 }
 
 /// <summary>
@@ -64,8 +58,8 @@ void SerialPacket::begin(long speed, uint8_t nodeID)
 {
   Serial.begin(speed);
   setNodeID(nodeID);
-//   incomingPacket.commandID = 2;
-//   outgoingPacket.commandID = 3;
+  //   incomingPacket.commandID = 2;
+  //   outgoingPacket.commandID = 3;
 }
 
 /// <summary>
@@ -166,12 +160,10 @@ void SerialPacket::sendPacket(uint8_t& payload)
   Serial.print("N");
   hexPrinting(_nodeID);
   Serial.print("I");
-  if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY))
-  {
+  if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY)) {
     hexPrinting(_commandID);
   }
-  else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_BYTE) | (_packetType == DATA_REQUEST))
-  {
+  else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_BYTE) | (_packetType == DATA_REQUEST)) {
     hexPrinting(_sensorID);
   }
   Serial.print("P");
@@ -192,12 +184,11 @@ void SerialPacket::sendPacket(int16_t& payload)
   Serial.print("N");
   hexPrinting(_nodeID);
   Serial.print("I");
-  if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY))
-  {
+  if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY)) {
     hexPrinting(_commandID);
   }
-  else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_INT) | (_packetType == DATA_REQUEST))  //_packetType == DATA_ARRAY_REQUEST (not yet implemented as a separate function)
-  {
+                                                  //_packetType == DATA_ARRAY_REQUEST (not yet implemented as a separate function)
+  else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_INT) | (_packetType == DATA_REQUEST)) {
     hexPrinting(_sensorID);
   }
   Serial.print("P");
@@ -222,8 +213,7 @@ void SerialPacket::sendDataArray(uint8_t *dataArray, uint8_t length)
   hexPrinting(_sensorID);
   Serial.print("P");
 
-  for(int i=0 ; i<length ; i++)
-  {
+  for(int i=0 ; i<length ; i++) {
     hexPrinting(dataArray[i]);
     _parity=_parity^dataArray[i];
   }
@@ -253,8 +243,7 @@ void SerialPacket::setPacketType(uint8_t type)
 /// </summary>
 void SerialPacket::hexPrinting(uint8_t& data)
 {
-  if(data<16)
-  {
+  if(data<16) {
     Serial.print(0, HEX);
   }
   Serial.print(data, HEX);
@@ -265,19 +254,16 @@ void SerialPacket::hexPrinting(uint8_t& data)
 /// </summary>
 void SerialPacket::hexPrinting(int16_t& data)
 {
-  if(data<4096 && data>0)
-  {
+  if(data<4096 && data>0) {
     Serial.print(0, HEX);
   }
-  if(data<256 && data>0)
-  {
+  if(data<256 && data>0) {
     Serial.print(0, HEX);
   }
-  if(data<16 && data>0)
-  {
+  if(data<16 && data>0) {
     Serial.print(0, HEX);
   }
-  Serial.print(uint16_t(data), HEX);  //casting to suppress FFFF for negative int values
+  Serial.print(uint16_t(data), HEX);              //casting to suppress FFFF for negative int values
 }
 
 /// <summary>
@@ -299,98 +285,127 @@ void SerialPacket::setSensorID(uint8_t& sensorID)
 /// <summary>
 /// Set readSerialData
 /// </summary>
-void SerialPacket::readSerialData()
+boolean SerialPacket::readSerialData()
 {
-  char inChar;
-  while (Serial.available() && inChar != '\n' ) {
+  while (Serial.available() && _inputChar[_incomingCounter] != '\n' ) {
     _inputChar[_incomingCounter]=(char)Serial.read();
     _incomingCounter++;
+    if (_incomingCounter == 16) {                 /// @todo: used detect new packets (for command reply), needs to be merged with the (currenty non-existing packet validation code)
+      newPacket = true;
+    }
   }
-  
+
   //Flush buffer
-  while (Serial.read() >= 0){} 
+  while (Serial.read() >= 0){}
 
-  parseSerialData();
-  printInfo();
+  //   parseSerialData();
+  // Does not work when parsing is called in the return statement
+  // #ifdef DEBUG_SERIAL
+  //   printInfo();
+  // #endif
   _incomingCounter=0;
+  return (parseSerialData());
 }
-
 
 /// <summary>
 /// Set parseSerialData
 /// </summary>
-void SerialPacket::parseSerialData()
+/// @todo: error handling: illegal payloads is now handled by char position (G2 -> 02, 2G -> 20, GG -> 00), requires hextodec reimplementation
+boolean SerialPacket::parseSerialData()
 {
   incomingPacket.packetType = hex_to_dec(_inputChar[1])*16 + hex_to_dec(_inputChar[2]);
   incomingPacket.nodeID = hex_to_dec(_inputChar[4])*16 + hex_to_dec(_inputChar[5]);
   incomingPacket.payload = hex_to_dec(_inputChar[10])*16 + hex_to_dec(_inputChar[11]);
-  if ((incomingPacket.packetType == COMMAND) | (incomingPacket.packetType == COMMAND_REPLY))
-  {
-    incomingPacket.sensorID = hex_to_dec(_inputChar[7])*16 + hex_to_dec(_inputChar[8]);
-    _checkedParity = incomingPacket.packetType^incomingPacket.nodeID^incomingPacket.sensorID^incomingPacket.payload; 
-  }
-  else if ((incomingPacket.packetType == DATA_INT) | (incomingPacket.packetType == DATA_BYTE) | (incomingPacket.packetType == DATA_REQUEST))
-  {
-    incomingPacket.commandID = hex_to_dec(_inputChar[7])*16 + hex_to_dec(_inputChar[8]);;
+  //Serial.print("Type: ");
+  //Serial.print(incomingPacket.packetType);
+  // casting error hex vs decimal (in if)
+  if ((incomingPacket.packetType == COMMAND) | (incomingPacket.packetType == COMMAND_REPLY)) {
+    //Serial.println("parseSerialData");
+    incomingPacket.commandID = hex_to_dec(_inputChar[7])*16 + hex_to_dec(_inputChar[8]);
+    //Serial.println(incomingPacket.commandID);
     _checkedParity = incomingPacket.packetType^incomingPacket.nodeID^incomingPacket.commandID^incomingPacket.payload;
   }
-  incomingPacket.parity = hex_to_dec(_inputChar[13])*16 + hex_to_dec(_inputChar[14]);  
+  else if ((incomingPacket.packetType == DATA_INT) | (incomingPacket.packetType == DATA_BYTE) | (incomingPacket.packetType == DATA_REQUEST)) {
+    incomingPacket.sensorID = hex_to_dec(_inputChar[7])*16 + hex_to_dec(_inputChar[8]);;
+    _checkedParity = incomingPacket.packetType^incomingPacket.nodeID^incomingPacket.sensorID^incomingPacket.payload;
+  }
+  incomingPacket.parity = hex_to_dec(_inputChar[13])*16 + hex_to_dec(_inputChar[14]);
+
+  if (newPacket) {
+    newPacket=false;
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 /// <summary>
 /// Convert HEX to Decimal
 /// </summary>
-#define HEX_DEC_ERROR 42 
-uint8_t SerialPacket::hex_to_dec(uint8_t in) 
-{ 
-   if(((in >= '0') && (in <= '9'))) return in-'0'; 
-   in |= 0x20; 
-   if(((in >= 'a') && (in <= 'f'))) return in-'a' + 10; 
-   return HEX_DEC_ERROR; 
+#define HEX_DEC_ERROR 0
+uint8_t SerialPacket::hex_to_dec(uint8_t in)
+{
+  if(((in >= '0') && (in <= '9'))) return in-'0';
+  in |= 0x20;
+  if(((in >= 'a') && (in <= 'f'))) return in-'a' + 10;
+  return HEX_DEC_ERROR;
 }
-
 
 /// <summary>
-/// printInfo: 
+/// printInfo:
 /// </summary>
-void SerialPacket::printInfo() 
+void SerialPacket::printInfo()
 {
-//     for(int i=0;i<_incomingCounter;i++)
-//     {
-//       Serial.print(_inputChar[i]);
-//     }
-    Serial.print("Type:     ");
-    Serial.println(incomingPacket.packetType,HEX);
-    Serial.print("NodeID:   ");
-    Serial.println(incomingPacket.nodeID,HEX);
-    Serial.print("SensorID: ");
-    Serial.println(incomingPacket.sensorID,HEX);
-    Serial.print("CommandID ");
-    Serial.println(incomingPacket.commandID,HEX);
-    Serial.print("Payload:  ");
-    Serial.println(incomingPacket.payload,HEX);
-    Serial.print("Parity:   ");
-    Serial.println(incomingPacket.parity,HEX);
-    Serial.println("------------");
-    Serial.print("Checked parity:   ");    
-    Serial.println(_checkedParity,HEX);
-    Serial.println("------------");
+  //     for(int i=0;i<_incomingCounter;i++)
+  //     {
+  //       Serial.print(_inputChar[i]);
+  //     }
+  Serial.print("Type:     ");
+  Serial.println(incomingPacket.packetType,HEX);
+  Serial.print("NodeID:   ");
+  Serial.println(incomingPacket.nodeID,HEX);
+  Serial.print("SensorID: ");
+  Serial.println(incomingPacket.sensorID,HEX);
+  Serial.print("CommandID ");
+  Serial.println(incomingPacket.commandID,HEX);
+  Serial.print("Payload:  ");
+  Serial.println(incomingPacket.payload,HEX);
+  Serial.print("Parity:   ");
+  Serial.println(incomingPacket.parity,HEX);
+  Serial.println("------------");
+  Serial.print("Checked parity:   ");
+  Serial.println(_checkedParity,HEX);
+  Serial.println("------------");
 }
-
 
 /// <summary>
 /// Convert HEX to DecimalT12N00I00P1CQ0E
 /// </summary>
 boolean SerialPacket::checkParity()
 {
-    if(incomingPacket.parity == _checkedParity)
-    {
-      return(true);
-    }
-    else 
-    {
-      return(false);
-    }
+  if(incomingPacket.parity == _checkedParity) {
+    return(true);
+  }
+  else {
+    return(false);
+  }
+}
+
+/// <summary>
+/// Get commandID
+/// </summary>
+uint8_t SerialPacket::getCommandID()
+{
+  return incomingPacket.commandID;
+}
+
+/// <summary>
+/// Get getPayload
+/// </summary>
+uint8_t SerialPacket::getPayload()
+{
+  return incomingPacket.payload;
 }
 
 /// <summary>
