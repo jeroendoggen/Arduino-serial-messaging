@@ -48,7 +48,7 @@ SerialPacket::SerialPacket() : _inputChar()
 /// </summary>
 void SerialPacket::begin()
 {
-  begin (115200,0);                               //TODO put baudrates in defines.h
+  begin (DEFAULT_BAUDRATE,0);
 }
 
 /// <summary>
@@ -113,7 +113,7 @@ void SerialPacket::sendDataArrayRequest(uint8_t arrayID, uint8_t payload)
 
 /// <summary>
 /// Send a single data value
-/// </summary>T12N00I00P00Q12
+/// </summary>
 void SerialPacket::sendData(uint8_t sensorID, uint8_t payload)
 {
   setPacketType(DATA_BYTE);
@@ -154,7 +154,6 @@ void SerialPacket::sendData(int16_t payload)
 /// </summary>
 void SerialPacket::sendPacket(uint8_t& payload)
 {
-  _parity=_packetType^_nodeID^_sensorID^payload;
   Serial.print("T");
   hexPrinting(_packetType);
   Serial.print("N");
@@ -162,9 +161,11 @@ void SerialPacket::sendPacket(uint8_t& payload)
   Serial.print("I");
   if ((_packetType == COMMAND) | (_packetType == COMMAND_REPLY)) {
     hexPrinting(_commandID);
+    _parity=_packetType^_nodeID^_commandID^payload;
   }
   else if ((_packetType == DATA_ARRAY_REQUEST) | (_packetType == DATA_BYTE) | (_packetType == DATA_REQUEST)) {
     hexPrinting(_sensorID);
+    _parity=_packetType^_nodeID^_sensorID^payload;
   }
   Serial.print("P");
   hexPrinting(payload);
@@ -200,7 +201,7 @@ void SerialPacket::sendPacket(int16_t& payload)
 
 /// <summary>
 /// Send multiple data samples in one packet by passing an array and its length
-/// </summary>T12N00I00P1CQ0E
+/// </summary>
 void SerialPacket::sendDataArray(uint8_t *dataArray, uint8_t length)
 {
   setSensorID(length);                            //sensorID contains the length of the data array (can be used at receiving side)
@@ -380,7 +381,7 @@ void SerialPacket::printInfo()
 }
 
 /// <summary>
-/// Convert HEX to DecimalT12N00I00P1CQ0E
+/// Convert HEX to Decimal
 /// </summary>
 boolean SerialPacket::checkParity()
 {
@@ -407,21 +408,3 @@ uint8_t SerialPacket::getPayload()
 {
   return incomingPacket.payload;
 }
-
-/// <summary>
-/// Get commandID
-/// </summary>
-uint8_t SerialPacket::getCommandID()
-{
-    return incomingPacket.commandID;
-}
-
-/// <summary>
-/// Get commandID
-/// </summary>
-uint8_t SerialPacket::getPayload()
-{
-    return incomingPacket.payload;
-}
-
-
