@@ -58,8 +58,6 @@ void SerialPacket::begin(long speed, uint8_t nodeID)
 {
   Serial.begin(speed);
   setNodeID(nodeID);
-  //   incomingPacket.commandID = 2;
-  //   outgoingPacket.commandID = 3;
 }
 
 /// <summary>
@@ -291,7 +289,7 @@ boolean SerialPacket::readSerialData()
   while (Serial.available() && _inputChar[_incomingCounter] != '\n' ) {
     _inputChar[_incomingCounter]=(char)Serial.read();
     _incomingCounter++;
-    if (_incomingCounter == 16) {                 /// @todo: used detect new packets (for command reply), needs to be merged with the (currenty non-existing packet validation code)
+    if (_incomingCounter == 16) {
       newPacket = true;
     }
   }
@@ -301,9 +299,9 @@ boolean SerialPacket::readSerialData()
 
   //   parseSerialData();
   // Does not work when parsing is called in the return statement
-  // #ifdef DEBUG_SERIAL
-  //   printInfo();
-  // #endif
+  #ifdef DEBUG_SERIAL
+  printInfo();
+  #endif
   _incomingCounter=0;
   return (parseSerialData());
 }
@@ -311,7 +309,7 @@ boolean SerialPacket::readSerialData()
 /// <summary>
 /// Set parseSerialData
 /// </summary>
-/// @todo: error handling: illegal payloads is now handled by char position (G2 -> 02, 2G -> 20, GG -> 00), requires hextodec reimplementation
+/// @todo: error handling: illegal payloads is now handled by char position (G2 -> 02, 2G -> 20, GG -> 00), requires hextodec reimplementation (when HEX_DEC_ERROR=0)
 boolean SerialPacket::parseSerialData()
 {
   incomingPacket.packetType = hex_to_dec(_inputChar[1])*16 + hex_to_dec(_inputChar[2]);
@@ -334,12 +332,27 @@ boolean SerialPacket::parseSerialData()
 
   if (newPacket) {
     newPacket=false;
-    return true;
+    return checkParity();
   }
   else {
     return false;
   }
 }
+
+/// <summary>
+/// Check if all the field in the packet have acceptable value
+/// @TODO: implement this
+/// </summary>
+boolean SerialPacket::validatePacketFields()
+{
+  if (true){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
 
 /// <summary>
 /// Convert HEX to Decimal
@@ -358,10 +371,6 @@ uint8_t SerialPacket::hex_to_dec(uint8_t in)
 /// </summary>
 void SerialPacket::printInfo()
 {
-  //     for(int i=0;i<_incomingCounter;i++)
-  //     {
-  //       Serial.print(_inputChar[i]);
-  //     }
   Serial.print("Type:     ");
   Serial.println(incomingPacket.packetType,HEX);
   Serial.print("NodeID:   ");
@@ -381,15 +390,21 @@ void SerialPacket::printInfo()
 }
 
 /// <summary>
-/// Convert HEX to Decimal
+/// Check parity
 /// </summary>
 boolean SerialPacket::checkParity()
 {
-  if(incomingPacket.parity == _checkedParity) {
-    return(true);
+  if (_checkedParity == incomingPacket.parity){
+    #ifdef DEBUG_SERIAL
+    Serial.println("Parity ok");
+    #endif
+    return true;
   }
-  else {
-    return(false);
+  else{
+    #ifdef DEBUG_SERIAL
+    Serial.println("Parity wrong");
+    #endif
+    return false;
   }
 }
 
