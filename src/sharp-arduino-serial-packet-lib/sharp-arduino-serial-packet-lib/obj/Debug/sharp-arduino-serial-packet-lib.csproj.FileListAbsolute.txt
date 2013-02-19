@@ -1,5 +1,0 @@
-E:\Mijn Documenten\PROGPROJECTS\7_GIT\sharp-arduino-serial-packet\src\sharp-arduino-serial-packet-lib\sharp-arduino-serial-packet-lib\bin\Debug\sharp-arduino-serial-packet-lib.dll
-E:\Mijn Documenten\PROGPROJECTS\7_GIT\sharp-arduino-serial-packet\src\sharp-arduino-serial-packet-lib\sharp-arduino-serial-packet-lib\bin\Debug\sharp-arduino-serial-packet-lib.pdb
-E:\Mijn Documenten\PROGPROJECTS\7_GIT\sharp-arduino-serial-packet\src\sharp-arduino-serial-packet-lib\sharp-arduino-serial-packet-lib\obj\Debug\sharp-arduino-serial-packet-lib.csprojResolveAssemblyReference.cache
-E:\Mijn Documenten\PROGPROJECTS\7_GIT\sharp-arduino-serial-packet\src\sharp-arduino-serial-packet-lib\sharp-arduino-serial-packet-lib\obj\Debug\sharp-arduino-serial-packet-lib.dll
-E:\Mijn Documenten\PROGPROJECTS\7_GIT\sharp-arduino-serial-packet\src\sharp-arduino-serial-packet-lib\sharp-arduino-serial-packet-lib\obj\Debug\sharp-arduino-serial-packet-lib.pdb
