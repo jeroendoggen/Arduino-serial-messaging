@@ -42,7 +42,7 @@ namespace sharp_arduino_serial_packet_lib
            Packet result= new Packet();
             string packasStr = Encoding.UTF8.GetString(p);
             result.PacketType = GetPacketType(packasStr[1]);
-
+            //http://stackoverflow.com/questions/623104/byte-to-hex-string
             return result;
         }
 
