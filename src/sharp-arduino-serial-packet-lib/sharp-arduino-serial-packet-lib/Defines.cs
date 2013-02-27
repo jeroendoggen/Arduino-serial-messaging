@@ -1,6 +1,7 @@
 ﻿namespace sharp_arduino_serial_packet_lib
 {
-    class Defines
+    //http://www.codeproject.com/Articles/75770/Basic-serial-port-listening-application 
+    public class Defines
     {
         public const int DEFAULT_BAUDRATE = 115200;
 

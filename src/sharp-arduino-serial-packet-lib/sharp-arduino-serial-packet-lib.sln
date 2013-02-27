@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sharp-arduino-serial-packet-lib", "sharp-arduino-serial-packet-lib\sharp-arduino-serial-packet-lib.csproj", "{57D2E5BA-3B0B-4A73-8AE6-C19F1FD493FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "seriallibtester", "seriallibtester\seriallibtester.csproj", "{A104ABD2-5D4A-423B-9467-D902C0AB56C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{57D2E5BA-3B0B-4A73-8AE6-C19F1FD493FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57D2E5BA-3B0B-4A73-8AE6-C19F1FD493FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57D2E5BA-3B0B-4A73-8AE6-C19F1FD493FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A104ABD2-5D4A-423B-9467-D902C0AB56C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A104ABD2-5D4A-423B-9467-D902C0AB56C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A104ABD2-5D4A-423B-9467-D902C0AB56C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A104ABD2-5D4A-423B-9467-D902C0AB56C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
