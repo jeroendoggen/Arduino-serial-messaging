@@ -32,16 +32,16 @@ namespace sharp_arduino_serial_packet_lib
 
             try
             {
-                     ParseData(e.Data);
+                ParseData(e.Data);
             }
             catch (Exception ex)
             {
 
-                Debug.WriteLine("Corrupt packet: dropped + (" + Encoding.UTF8.GetString(e.Data)+")");
+                Debug.WriteLine("Corrupt packet: dropped + (" + Encoding.UTF8.GetString(e.Data) + ")");
             }
-            
 
-           
+
+
         }
 
         private Packet incomingPacket = new Packet();
@@ -51,11 +51,11 @@ namespace sharp_arduino_serial_packet_lib
         private void ParseData(byte[] p)
         {
 
-            
+
             var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
-           
+
             Debug.WriteLine("New packet:\t string:" + packetStr);
-            
+
             for (int i = 0; i < packetStr.Length; i++)
             {
                 //Simple state-machine
@@ -94,15 +94,15 @@ namespace sharp_arduino_serial_packet_lib
                             i++;
                             break;
                         case PacketFields.NodeID:
-                            incomingPacket.NodeID = incomingPacket.NodeID = packetStr.Substring(i, 2).FromHexStringToInt();
+                            incomingPacket.NodeID = packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
                         case PacketFields.SensorID:
-                            incomingPacket.SensorID = incomingPacket.NodeID = packetStr.Substring(i, 2).FromHexStringToInt();
+                            incomingPacket.SensorID = packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
-                        case PacketFields.CommandID: 
-                            incomingPacket.CommandID =(Commands)packetStr.Substring(i, 2).FromHexStringToInt();
+                        case PacketFields.CommandID:
+                            incomingPacket.CommandID = (Commands)packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
                         case PacketFields.Payload:
@@ -112,7 +112,8 @@ namespace sharp_arduino_serial_packet_lib
                         case PacketFields.Parity:
                             incomingPacket.Parity = packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
-                            if(SerialMessageReceived !=null) //&& parity klopt
+                            currentField = PacketFields.Unknown;
+                            if (SerialMessageReceived != null) //&& parity klopt
                                 SerialMessageReceived(this, new SerialArduinoMessageEventArgs(incomingPacket));
                             else
                             {
@@ -130,7 +131,7 @@ namespace sharp_arduino_serial_packet_lib
 
 
             //http://stackoverflow.com/questions/623104/byte-to-hex-string
-            
+
         }
 
 
@@ -160,33 +161,24 @@ namespace sharp_arduino_serial_packet_lib
         }
     }
 
-    static class ExtensionArray
+
+    static class ExtensionsMethods
     {
+
+        public static int FromHexStringToInt(this  string hexstr)
+        {
+            if (hexstr.Length == 2)
+            {
+                return Convert.ToInt32(hexstr, 16);
+            }
+            throw new IndexOutOfRangeException("Can only create int from 2-length hex arrays. String received: " + hexstr);
+        }
+
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
             T[] result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
-        }
-    }
-
-    static class ExtensionBitConvertor
-    {
-        public static int GetIntegerFromBinaryString(this string binary, int bitCount)
-        {
-            if (binary.Length == bitCount && binary[0] == '1')
-                return Convert.ToInt32(binary.PadLeft(32, '1'), 2);
-            else
-                return Convert.ToInt32(binary, 2);
-        }
-
-        public static int FromHexStringToInt(this  string hexstr)
-        {
-          //  if (hexstr.Length ==2)
-            {
-                return Convert.ToInt32(hexstr, 16);
-            }
-          
         }
     }
 }
