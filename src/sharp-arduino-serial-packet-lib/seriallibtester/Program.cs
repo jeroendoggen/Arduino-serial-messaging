@@ -16,7 +16,7 @@ namespace seriallibtester
 
                 SerialReaderWriter r = new SerialReaderWriter(comport:"COM4");
                 r.SerialMessageReceived += r_SerialDataReceived;
-                r.SerialMessageReceivedAsString += r_SerialMessageReceivedAsString;
+               // r.RawDataAsStringReceived += RRawDataAsStringReceived;
                 r.StartListening();
                 while (true)
                 {
@@ -31,7 +31,7 @@ namespace seriallibtester
 
         }
 
-        static void r_SerialMessageReceivedAsString(object sender, string e)
+        static void RRawDataAsStringReceived(object sender, string e)
         {
             Console.WriteLine(e);
         }

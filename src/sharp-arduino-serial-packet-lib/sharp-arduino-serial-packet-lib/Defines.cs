@@ -5,16 +5,6 @@
     {
         public const int DEFAULT_BAUDRATE = 115200;
 
-        public const int COMMAND = 0x01;
-        public const int COMMAND_REPLY = 0x02;
-
-        public const int DATA_REQUEST = 0x11;
-        public const int DATA_BYTE = 0x12;
-        public const int DATA_INT = 0x13;
-
-        public const int DATA_ARRAY_REQUEST = 0x21;
-        public const int DATA_ARRAY = 0x22;
-
         //Sensor types:
 
         public const int TEMPERATURE = 0x10;
@@ -24,17 +14,22 @@
         public const int MOTORSTATUS = 0x50;
 
         //Command IDs
-
-        public const int STOP_MOTOR_A = 0x10;
-        public const int START_MOTOR_A = 0x11;
-        public const int SET_SPEED_MOTOR_A = 0x12;
-        public const int BRAKE_MOTOR_A = 0x13;
-
-        public const int STOP_MOTOR_B = 0x15;
-        public const int START_MOTOR_B = 0x16;
-        public const int SET_SPEED_MOTOR_B = 0x17;
-        public const int BRAKE_MOTOR_B = 0x18;
-
+       
 
     }
+    public enum Commands
+    {
+        STOP_MOTOR_A = 0x10,
+        START_MOTOR_A = 0x11,
+        SET_SPEED_MOTOR_A = 0x12,
+        BRAKE_MOTOR_A = 0x13,
+        STOP_MOTOR_B = 0x15,
+        START_MOTOR_B = 0x16,
+        SET_SPEED_MOTOR_B = 0x17,
+        BRAKE_MOTOR_B = 0x18
+    }
+    public enum PacketFields {Unknown ,Type, NodeID, SensorID, CommandID, Payload, Parity}
+
+    public enum PacketTypes { Command = 0x01, Command_Reply =0x02, Data_Request= 0x11, Data_Byte= 0x12, Data_Int=0x13, Data_Array_Request= 0x21, Data_Array= 0x22, Unknown = 0x77}
+
 }

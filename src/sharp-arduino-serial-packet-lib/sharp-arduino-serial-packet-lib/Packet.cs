@@ -3,12 +3,12 @@
      
     public class Packet
     {
-        public Defines PacketType { get; set; }
-        public Defines NodeID { get; set; }
-        public Defines SensorID { get; set; }
-        public Defines CommandID { get; set; }
-        public Defines Payload { get; set; }
-        public Defines Parity { get; set; }
+        public PacketTypes PacketType { get; set; }
+        public int NodeID { get; set; }
+        public int SensorID { get; set; }
+        public int CommandID { get; set; }
+        public int Payload { get; set; }
+        public int Parity { get; set; }
 
         public override string ToString()
         {
