@@ -17,12 +17,12 @@ namespace sharp_arduino_serial_packet_lib
             var settings = spManager.CurrentSerialSettings;
             settings.BaudRate = baudrate;
             settings.PortName = comport;
-            spManager.NewSerialDataRecieved += spManager_NewSerialDataRecieved;
+            spManager.NewSerialDataRecieved += spManager_NewSerialDataReceived;
         }
 
         public event EventHandler<SerialArduinoMessageEventArgs> SerialMessageReceived;
         public event EventHandler<string> RawDataAsStringReceived;
-        void spManager_NewSerialDataRecieved(object sender, SerialDataEventArgs e)
+        void spManager_NewSerialDataReceived(object sender, SerialDataEventArgs e)
         {
             if (RawDataAsStringReceived != null)
             {
@@ -39,8 +39,6 @@ namespace sharp_arduino_serial_packet_lib
 
                 Debug.WriteLine("Corrupt packet: dropped + (" + Encoding.UTF8.GetString(e.Data) + ")");
             }
-
-
 
         }
 
@@ -61,7 +59,7 @@ namespace sharp_arduino_serial_packet_lib
                 //Simple state-machine
                 if (packetStr[i] == 'T')
                 {
-                    incomingPacket = new Packet();
+                    incomingPacket = new Packet() {RawString = packetStr};
                     currentField = PacketFields.Type;
                 }
 
@@ -113,7 +111,7 @@ namespace sharp_arduino_serial_packet_lib
                             incomingPacket.Parity = packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             currentField = PacketFields.Unknown;
-                            if (SerialMessageReceived != null) //&& parity klopt
+                            if (SerialMessageReceived != null && ComputeParity()== incomingPacket.Parity) //&& parity klopt
                                 SerialMessageReceived(this, new SerialArduinoMessageEventArgs(incomingPacket));
                             else
                             {
@@ -127,15 +125,13 @@ namespace sharp_arduino_serial_packet_lib
 
             }
 
-
-
-
-            //http://stackoverflow.com/questions/623104/byte-to-hex-string
-
         }
 
-
-
+        private int ComputeParity()
+        {
+            //TODO: compute parity (ask Jeroen)
+            return incomingPacket.Parity;
+        }
 
 
         public void StartListening()
@@ -155,6 +151,7 @@ namespace sharp_arduino_serial_packet_lib
     public class SerialArduinoMessageEventArgs : EventArgs
     {
         public Packet Packet { get; set; }
+        
         public SerialArduinoMessageEventArgs(Packet pckt)
         {
             Packet = pckt;

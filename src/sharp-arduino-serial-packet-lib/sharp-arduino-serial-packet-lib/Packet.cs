@@ -10,12 +10,13 @@
         public int Payload { get; set; }
         public int Parity { get; set; }
 
+        public string RawString { get; set; }
         public override string ToString()
         {
-            return string.Format("PacketType:{0} " +
-                                 "NodeID:{1} " +
-                                 "SensorID:{2} CommandID: {3}"+
-                                 "Payload:{4} Parity:{5}",PacketType,NodeID,SensorID,CommandID,Payload, Parity);
+            return string.Format("Raw string:{6} \nType:{0} " +
+                                 "Node:{1} " +
+                                 "Sensor:{2} Command: {3}"+
+                                 "Payload:{4} Parity:{5}\n",PacketType,NodeID,SensorID,CommandID,Payload, Parity, RawString.Trim());
 
         }
     } 
