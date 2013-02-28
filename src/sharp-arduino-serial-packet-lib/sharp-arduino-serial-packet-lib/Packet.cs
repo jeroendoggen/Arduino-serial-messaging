@@ -6,7 +6,7 @@
         public PacketTypes PacketType { get; set; }
         public int NodeID { get; set; }
         public int SensorID { get; set; }
-        public int CommandID { get; set; }
+        public Commands CommandID { get; set; }
         public int Payload { get; set; }
         public int Parity { get; set; }
 

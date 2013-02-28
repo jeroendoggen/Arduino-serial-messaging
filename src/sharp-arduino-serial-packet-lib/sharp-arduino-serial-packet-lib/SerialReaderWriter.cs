@@ -24,14 +24,24 @@ namespace sharp_arduino_serial_packet_lib
         public event EventHandler<string> RawDataAsStringReceived;
         void spManager_NewSerialDataRecieved(object sender, SerialDataEventArgs e)
         {
-
-            ParseData(e.Data);
-
             if (RawDataAsStringReceived != null)
             {
                 //Just send as as string
                 RawDataAsStringReceived(this, Encoding.UTF8.GetString(e.Data));
             }
+
+            try
+            {
+                     ParseData(e.Data);
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine("Corrupt packet: dropped + (" + Encoding.UTF8.GetString(e.Data)+")");
+            }
+            
+
+           
         }
 
         private Packet incomingPacket = new Packet();
@@ -41,10 +51,11 @@ namespace sharp_arduino_serial_packet_lib
         private void ParseData(byte[] p)
         {
 
-
-            var packetStr = Encoding.UTF8.GetString(p).Replace(Environment.NewLine, null);
-            Debug.WriteLine("New packet:" + packetStr);
-            var packetByteArray = Encoding.ASCII.GetBytes(packetStr);
+            
+            var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
+           
+            Debug.WriteLine("New packet:\t string:" + packetStr);
+            
             for (int i = 0; i < packetStr.Length; i++)
             {
                 //Simple state-machine
@@ -79,46 +90,34 @@ namespace sharp_arduino_serial_packet_lib
                         case PacketFields.Unknown:
                             break;
                         case PacketFields.Type:
-                            //if (packetStr[i] == '0' && packetStr[i + 1] == '1')
-                            //    incomingPacket.PacketType = PacketTypes.Command;
-                            //else if (packetStr[i] == '0' && packetStr[i + 1] == '2')
-                            //    incomingPacket.PacketType = PacketTypes.Command_Reply;
-                            //else if (packetStr[i] == '1' && packetStr[i + 1] == '1')
-                            //    incomingPacket.PacketType = PacketTypes.Data_Request;
-                            //else if (packetStr[i] == '1' && packetStr[i + 1] == '2')
-                            //    incomingPacket.PacketType = PacketTypes.Data_Byte;
-                            //else if (packetStr[i] == '1' && packetStr[i + 1] == '3')
-                            //    incomingPacket.PacketType = PacketTypes.Data_Int;
-                            //else if (packetStr[i] == '2' && packetStr[i + 1] == '1')
-                            //    incomingPacket.PacketType = PacketTypes.Data_Array_Request;
-                            //else if (packetStr[i] == '2' && packetStr[i + 1] == '2')
-                            //    incomingPacket.PacketType = PacketTypes.Data_Array;
-                            //else
-                            //    incomingPacket.PacketType = PacketTypes.Unknown;
-                            var psub = packetStr.Substring(i, 2);
-                            incomingPacket.PacketType=(PacketTypes)psub.GetIntegerFromBinaryString(2);
+                            incomingPacket.PacketType = (PacketTypes)packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
                         case PacketFields.NodeID:
-                            var sub = packetStr.Substring(i, 2);
-                            incomingPacket.NodeID = sub.GetIntegerFromBinaryString(2);
+                            incomingPacket.NodeID = incomingPacket.NodeID = packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
                         case PacketFields.SensorID:
-                            var subsens = packetStr.Substring(i, 2);
-                            incomingPacket.NodeID = subsens.GetIntegerFromBinaryString(2);
+                            incomingPacket.SensorID = incomingPacket.NodeID = packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
-                        case PacketFields.CommandID:
-                            var subcom = packetByteArray.SubArray(i, 2);
-                            incomingPacket.CommandID = BitConverter.ToInt16(subcom, 0);
+                        case PacketFields.CommandID: 
+                            incomingPacket.CommandID =(Commands)packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
                             break;
                         case PacketFields.Payload:
+                            incomingPacket.Payload = packetStr.Substring(i, 2).FromHexStringToInt();
+                            i++;
                             break;
                         case PacketFields.Parity:
-                            if(SerialMessageReceived !=null)
+                            incomingPacket.Parity = packetStr.Substring(i, 2).FromHexStringToInt();
+                            i++;
+                            if(SerialMessageReceived !=null) //&& parity klopt
                                 SerialMessageReceived(this, new SerialArduinoMessageEventArgs(incomingPacket));
+                            else
+                            {
+                                Debug.WriteLine("Parity failed");
+                            }
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -179,6 +178,15 @@ namespace sharp_arduino_serial_packet_lib
                 return Convert.ToInt32(binary.PadLeft(32, '1'), 2);
             else
                 return Convert.ToInt32(binary, 2);
+        }
+
+        public static int FromHexStringToInt(this  string hexstr)
+        {
+          //  if (hexstr.Length ==2)
+            {
+                return Convert.ToInt32(hexstr, 16);
+            }
+          
         }
     }
 }

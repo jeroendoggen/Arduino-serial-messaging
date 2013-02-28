@@ -16,7 +16,7 @@ namespace seriallibtester
 
                 SerialReaderWriter r = new SerialReaderWriter(comport:"COM4");
                 r.SerialMessageReceived += r_SerialDataReceived;
-               // r.RawDataAsStringReceived += RRawDataAsStringReceived;
+                r.RawDataAsStringReceived += RRawDataAsStringReceived;
                 r.StartListening();
                 while (true)
                 {
