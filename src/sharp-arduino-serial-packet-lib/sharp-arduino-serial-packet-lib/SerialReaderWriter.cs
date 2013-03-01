@@ -32,7 +32,7 @@ namespace sharp_arduino_serial_packet_lib
             if (RawDataAsStringReceived != null)
             {
                 //Just send as as string
-                RawDataAsStringReceived(this, Encoding.UTF8.GetString(e.Data));
+                RawDataAsStringReceived(this,e.Data);
             }
 
             try
@@ -41,8 +41,7 @@ namespace sharp_arduino_serial_packet_lib
             }
             catch (Exception ex)
             {
-
-                Debug.WriteLine("Corrupt packet: dropped + (" + Encoding.UTF8.GetString(e.Data) + ")");
+                Debug.WriteLine("Corrupt packet: dropped + (" + (e.Data) + ")");
                 CorruptPackets++;
             }
 
@@ -52,11 +51,11 @@ namespace sharp_arduino_serial_packet_lib
         private PacketFields currentField ;
 
 
-        private void ParseData(byte[] p)
+        private void ParseData(string packetStr)
         {
 
 
-            var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
+           // var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
 
             Debug.WriteLine("New packet:\t string:" + packetStr);
 

@@ -65,14 +65,13 @@ namespace sharp_arduino_serial_packet_lib
         void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             int dataLength = _serialPort.BytesToRead;
-            byte[] data = new byte[dataLength];
-            int nbrDataRead = _serialPort.Read(data, 0, dataLength);
-            if (nbrDataRead == 0)
+            string nbrDataRead = _serialPort.ReadLine();
+            if (nbrDataRead.Length == 0) 
                 return;
 
             // Send data to whom ever interested
             if (NewSerialDataRecieved != null)
-                NewSerialDataRecieved(this, new SerialDataEventArgs(data));
+                NewSerialDataRecieved(this, new SerialDataEventArgs(nbrDataRead));
         }
 
         #endregion
@@ -157,7 +156,7 @@ namespace sharp_arduino_serial_packet_lib
     /// </summary>
     public class SerialDataEventArgs : EventArgs
     {
-        public SerialDataEventArgs(byte[] dataInByteArray)
+        public SerialDataEventArgs(string dataInByteArray)
         {
             Data = dataInByteArray;
         }
@@ -165,6 +164,6 @@ namespace sharp_arduino_serial_packet_lib
         /// <summary>
         /// Byte array containing data from serial port
         /// </summary>
-        public byte[] Data;
+        public string Data;
     }
 }
