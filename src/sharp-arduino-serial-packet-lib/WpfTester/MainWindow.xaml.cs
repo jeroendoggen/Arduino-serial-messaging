@@ -26,7 +26,7 @@ namespace WpfTester
         public MainWindow()
         {
             InitializeComponent();
-            wr= new SerialReaderWriter(comport:"COM4");
+            wr = new SerialReaderWriter(comport: "COM4");
         }
 
         private SerialReaderWriter wr;
@@ -53,13 +53,18 @@ namespace WpfTester
         private delegate void UpdateUiTextDelegate(Packet recPacket);
         void wr_SerialMessageReceived(object sender, SerialArduinoMessageEventArgs e)
         {
-            Dispatcher.Invoke(DispatcherPriority.Send,new UpdateUiTextDelegate(WriteData), e.Packet);
-          
+            Dispatcher.Invoke(
+                DispatcherPriority.Send,
+                new Action(
+                    () =>
+                    {
+                        lbPackets.Items.Insert(0, e.Packet);
+                    }
+                        )
+                            );
+
         }
-        private void WriteData(Packet recPacket)
-        {
-            lbPackets.Items.Insert(0,recPacket);
-        }
+
     }
 
     public class CommandToText : IValueConverter
@@ -67,10 +72,9 @@ namespace WpfTester
         public object Convert(object value, Type targetType,
             object parameter, CultureInfo culture)
         {
-            Commands incCom = (Commands) value;
-            
-                return incCom.ToString();
-            
+            var incCom = (Commands)value;
+
+            return incCom.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -10,6 +10,10 @@ namespace sharp_arduino_serial_packet_lib
 {
     public class SerialReaderWriter
     {
+        //statistics
+        public int ReceivedPackets { get; set; }
+        public int CorruptPackets { get; set; }
+
         private SerialPortManager spManager;
         public SerialReaderWriter(int baudrate = 115200, string comport = "COM2")
         {
@@ -24,6 +28,7 @@ namespace sharp_arduino_serial_packet_lib
         public event EventHandler<string> RawDataAsStringReceived;
         void spManager_NewSerialDataReceived(object sender, SerialDataEventArgs e)
         {
+            ReceivedPackets++;
             if (RawDataAsStringReceived != null)
             {
                 //Just send as as string
@@ -38,12 +43,13 @@ namespace sharp_arduino_serial_packet_lib
             {
 
                 Debug.WriteLine("Corrupt packet: dropped + (" + Encoding.UTF8.GetString(e.Data) + ")");
+                CorruptPackets++;
             }
 
         }
 
         private Packet incomingPacket = new Packet();
-        private PacketFields currentField = PacketFields.Unknown;
+        private PacketFields currentField ;
 
 
         private void ParseData(byte[] p)
@@ -73,9 +79,6 @@ namespace sharp_arduino_serial_packet_lib
                     {
                         currentField = PacketFields.SensorID;
                     }
-                    else
-                        currentField = PacketFields.Unknown;
-
                 }
                 else if (packetStr[i] == 'P')
                     currentField = PacketFields.Payload;
@@ -85,8 +88,6 @@ namespace sharp_arduino_serial_packet_lib
                 {
                     switch (currentField)
                     {
-                        case PacketFields.Unknown:
-                            break;
                         case PacketFields.Type:
                             incomingPacket.PacketType = (PacketTypes)packetStr.Substring(i, 2).FromHexStringToInt();
                             i++;
@@ -109,8 +110,8 @@ namespace sharp_arduino_serial_packet_lib
                             break;
                         case PacketFields.Parity:
                             incomingPacket.Parity = packetStr.Substring(i, 2).FromHexStringToInt();
-                            i++;
-                            currentField = PacketFields.Unknown;
+                            i = packetStr.Length; //we're done with this packet
+   
                             if (SerialMessageReceived != null && ComputeParity()== incomingPacket.Parity) //&& parity klopt
                                 SerialMessageReceived(this, new SerialArduinoMessageEventArgs(incomingPacket));
                             else

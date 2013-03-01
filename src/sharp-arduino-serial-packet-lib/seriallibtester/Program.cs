@@ -9,12 +9,13 @@ namespace seriallibtester
 {
     class Program
     {
+        private static SerialReaderWriter r;
         static void Main(string[] args)
         {
             try
             {
 
-                SerialReaderWriter r = new SerialReaderWriter(comport: "COM4");
+                r = new SerialReaderWriter(comport: "COM4");
                 r.SerialMessageReceived += r_SerialDataReceived;
                 r.StartListening();
                 while (true)
@@ -32,6 +33,8 @@ namespace seriallibtester
         {
 
             Console.WriteLine(e.Packet.ToString());
+            Console.WriteLine("Received:{0} Corrupt: {1}",r.ReceivedPackets, r.CorruptPackets);
+
         }
     }
 }
