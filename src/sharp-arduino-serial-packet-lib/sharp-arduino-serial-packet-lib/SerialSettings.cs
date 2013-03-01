@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sharp_arduino_serial_packet_lib
 {
@@ -17,12 +13,11 @@ namespace sharp_arduino_serial_packet_lib
         {
             public event PropertyChangedEventHandler PropertyChanged;
             string _portName = "";
-            string[] _portNameCollection;
             int _baudRate = 115200;
-            BindingList<int> _baudRateCollection = new BindingList<int>();
+            readonly BindingList<int> _baudRateCollection = new BindingList<int>();
             Parity _parity = Parity.None;
             int _dataBits = 8;
-            int[] _dataBitsCollection = new int[] { 5, 6, 7, 8 };
+            int[] _dataBitsCollection = { 5, 6, 7, 8 };
             StopBits _stopBits = StopBits.One;
 
             #region Properties
@@ -106,11 +101,7 @@ namespace sharp_arduino_serial_packet_lib
             /// <summary>
             /// Available ports on the computer
             /// </summary>
-            public string[] PortNameCollection
-            {
-                get { return _portNameCollection; }
-                set { _portNameCollection = value; }
-            }
+            public string[] PortNameCollection { get; set; }
 
             /// <summary>
             /// Available baud rates for current serial port

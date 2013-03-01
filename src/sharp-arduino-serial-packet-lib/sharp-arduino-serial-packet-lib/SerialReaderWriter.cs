@@ -1,45 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sharp_arduino_serial_packet_lib
 {
-    public class SerialReaderWriter
+    public class SerialReaderWriter : IDisposable
     {
         //statistics
         public int ReceivedPackets { get; set; }
         public int CorruptPackets { get; set; }
 
-        private SerialPortManager spManager;
+        private readonly SerialPortManager spManager;
         public SerialReaderWriter(int baudrate = 115200, string comport = "COM2")
         {
             spManager = new SerialPortManager();
             var settings = spManager.CurrentSerialSettings;
             settings.BaudRate = baudrate;
             settings.PortName = comport;
-            spManager.NewSerialDataRecieved += spManager_NewSerialDataReceived;
+            spManager.NewSerialDataReceived += spManager_NewSerialDataReceived;
         }
 
         public event EventHandler<SerialArduinoMessageEventArgs> SerialMessageReceived;
-        public event EventHandler<string> RawDataAsStringReceived;
+
         void spManager_NewSerialDataReceived(object sender, SerialDataEventArgs e)
         {
             ReceivedPackets++;
-            if (RawDataAsStringReceived != null)
-            {
-                //Just send as as string
-                RawDataAsStringReceived(this,e.Data);
-            }
 
             try
             {
                 ParseData(e.Data);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Debug.WriteLine("Corrupt packet: dropped + (" + (e.Data) + ")");
                 CorruptPackets++;
@@ -48,14 +38,14 @@ namespace sharp_arduino_serial_packet_lib
         }
 
         private Packet incomingPacket = new Packet();
-        private PacketFields currentField ;
+        private PacketFields currentField;
 
 
         private void ParseData(string packetStr)
         {
 
 
-           // var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
+            // var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
 
             Debug.WriteLine("New packet:\t string:" + packetStr);
 
@@ -64,7 +54,7 @@ namespace sharp_arduino_serial_packet_lib
                 //Simple state-machine
                 if (packetStr[i] == 'T')
                 {
-                    incomingPacket = new Packet() {RawString = packetStr};
+                    incomingPacket = new Packet { RawString = packetStr };
                     currentField = PacketFields.Type;
                 }
 
@@ -110,8 +100,8 @@ namespace sharp_arduino_serial_packet_lib
                         case PacketFields.Parity:
                             incomingPacket.Parity = packetStr.Substring(i, 2).FromHexStringToInt();
                             i = packetStr.Length; //we're done with this packet
-   
-                            if (SerialMessageReceived != null && ComputeParity()== incomingPacket.Parity) //&& parity klopt
+
+                            if (SerialMessageReceived != null && ComputeParity() == incomingPacket.Parity) //&& parity klopt
                                 SerialMessageReceived(this, new SerialArduinoMessageEventArgs(incomingPacket));
                             else
                             {
@@ -146,12 +136,29 @@ namespace sharp_arduino_serial_packet_lib
                 spManager.StopListening();
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                spManager.StopListening();
+                spManager.NewSerialDataReceived -= spManager_NewSerialDataReceived;
+                spManager.Dispose();
+            }
+
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
 
     }
     public class SerialArduinoMessageEventArgs : EventArgs
     {
         public Packet Packet { get; set; }
-        
+
         public SerialArduinoMessageEventArgs(Packet pckt)
         {
             Packet = pckt;
@@ -173,7 +180,7 @@ namespace sharp_arduino_serial_packet_lib
 
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
-            T[] result = new T[length];
+            var result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
         }

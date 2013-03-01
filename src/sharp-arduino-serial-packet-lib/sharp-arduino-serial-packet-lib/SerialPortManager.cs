@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sharp_arduino_serial_packet_lib
 {
@@ -18,7 +14,7 @@ namespace sharp_arduino_serial_packet_lib
         {
             // Finding installed serial ports on hardware
             _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();
-            _currentSerialSettings.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(_currentSerialSettings_PropertyChanged);
+            _currentSerialSettings.PropertyChanged += _currentSerialSettings_PropertyChanged;
 
             // If serial ports is found, we select the first found
             if (_currentSerialSettings.PortNameCollection.Length > 0)
@@ -35,8 +31,7 @@ namespace sharp_arduino_serial_packet_lib
         #region Fields
         private SerialPort _serialPort;
         private SerialSettings _currentSerialSettings = new SerialSettings();
-        private string _latestRecieved = String.Empty;
-        public event EventHandler<SerialDataEventArgs> NewSerialDataRecieved;
+        public event EventHandler<SerialDataEventArgs> NewSerialDataReceived;
 
         #endregion
 
@@ -64,14 +59,13 @@ namespace sharp_arduino_serial_packet_lib
 
         void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            int dataLength = _serialPort.BytesToRead;
             string nbrDataRead = _serialPort.ReadLine();
-            if (nbrDataRead.Length == 0) 
+            if (nbrDataRead.Length == 0)
                 return;
 
             // Send data to whom ever interested
-            if (NewSerialDataRecieved != null)
-                NewSerialDataRecieved(this, new SerialDataEventArgs(nbrDataRead));
+            if (NewSerialDataReceived != null)
+                NewSerialDataReceived(this, new SerialDataEventArgs(nbrDataRead));
         }
 
         #endregion
@@ -96,7 +90,7 @@ namespace sharp_arduino_serial_packet_lib
                 _currentSerialSettings.StopBits);
 
             // Subscribe to event and open serial port for data
-            _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
+            _serialPort.DataReceived += _serialPort_DataReceived;
             _serialPort.Open();
         }
 
@@ -116,11 +110,24 @@ namespace sharp_arduino_serial_packet_lib
         {
             _serialPort = new SerialPort(_currentSerialSettings.PortName);
             _serialPort.Open();
-            object p = _serialPort.BaseStream.GetType().GetField("commProp", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_serialPort.BaseStream);
-            Int32 dwSettableBaud = (Int32)p.GetType().GetField("dwSettableBaud", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).GetValue(p);
+            var field = _serialPort.BaseStream.GetType().GetField("commProp", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (field != null)
+            {
+                var p = field.GetValue(_serialPort.BaseStream);
 
-            _serialPort.Close();
-            _currentSerialSettings.UpdateBaudRateCollection(dwSettableBaud);
+                if (p != null)
+                {
+                    var fieldInfo = p.GetType().GetField("dwSettableBaud", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                    if (fieldInfo != null)
+                    {
+                        var dwSettableBaud = (Int32)fieldInfo.GetValue(p);
+
+                        _serialPort.Close();
+                        _currentSerialSettings.UpdateBaudRateCollection(dwSettableBaud);
+                    }
+                }
+
+            }
         }
 
         // Call to release serial port
@@ -134,7 +141,7 @@ namespace sharp_arduino_serial_packet_lib
         {
             if (disposing)
             {
-                _serialPort.DataReceived -= new SerialDataReceivedEventHandler(_serialPort_DataReceived);
+                _serialPort.DataReceived -= _serialPort_DataReceived;
             }
             // Releasing serial port (and other unmanaged objects)
             if (_serialPort != null)
@@ -152,7 +159,7 @@ namespace sharp_arduino_serial_packet_lib
     }
 
     /// <summary>
-    /// EventArgs used to send bytes recieved on serial port
+    /// EventArgs used to send bytes received on serial port
     /// </summary>
     public class SerialDataEventArgs : EventArgs
     {
