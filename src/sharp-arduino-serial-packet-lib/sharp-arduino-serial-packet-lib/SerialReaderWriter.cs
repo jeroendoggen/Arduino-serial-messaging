@@ -1,29 +1,45 @@
 ﻿using System;
 using System.Diagnostics;
+using sharp_arduino_serial_packet_lib.SerialPortReaderWriter;
 
 namespace sharp_arduino_serial_packet_lib
 {
     public class SerialReaderWriter : IDisposable
     {
-        //statistics
-        public int ReceivedPackets { get; set; }
-        public int CorruptPackets { get; set; }
 
-        private readonly SerialPortManager spManager;
+        public SerialSettings SerialSettings
+        {
+            get { return spManager.CurrentSerialSettings; }
+            set { spManager.CurrentSerialSettings = value; }
+        }
+
+        public Statistics Statistics
+        {
+            get { return _statistics; }
+        }
+
+
+        private readonly SerialPortManager spManager = new SerialPortManager();
+
         public SerialReaderWriter(int baudrate = 115200, string comport = "COM2")
         {
-            spManager = new SerialPortManager();
-            var settings = spManager.CurrentSerialSettings;
-            settings.BaudRate = baudrate;
-            settings.PortName = comport;
-            spManager.NewSerialDataReceived += spManager_NewSerialDataReceived;
+            _statistics = new Statistics();
+            spManager.CurrentSerialSettings.BaudRate = baudrate;
+            spManager.CurrentSerialSettings.PortName = comport;
         }
+
+        public SerialReaderWriter(SerialSettings settings)
+        {
+            _statistics = new Statistics();
+            spManager.CurrentSerialSettings = settings;
+        }
+
 
         public event EventHandler<SerialArduinoMessageEventArgs> SerialMessageReceived;
 
         void spManager_NewSerialDataReceived(object sender, SerialDataEventArgs e)
         {
-            ReceivedPackets++;
+            Statistics.ReceivedPackets++;
 
             try
             {
@@ -32,13 +48,14 @@ namespace sharp_arduino_serial_packet_lib
             catch (Exception)
             {
                 Debug.WriteLine("Corrupt packet: dropped + (" + (e.Data) + ")");
-                CorruptPackets++;
+                Statistics.CorruptPackets++;
             }
 
         }
 
         private Packet incomingPacket = new Packet();
         private PacketFields currentField;
+        private readonly Statistics _statistics;
 
 
         private void ParseData(string packetStr)
@@ -127,13 +144,20 @@ namespace sharp_arduino_serial_packet_lib
         public void StartListening()
         {
             if (spManager != null)
+            {
+                spManager.NewSerialDataReceived += spManager_NewSerialDataReceived;
                 spManager.StartListening();
+            }
+           
         }
-
+    
         public void StopListening()
         {
             if (spManager != null)
+            {
+                spManager.NewSerialDataReceived -= spManager_NewSerialDataReceived;
                 spManager.StopListening();
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -162,27 +186,6 @@ namespace sharp_arduino_serial_packet_lib
         public SerialArduinoMessageEventArgs(Packet pckt)
         {
             Packet = pckt;
-        }
-    }
-
-
-    static class ExtensionsMethods
-    {
-
-        public static int FromHexStringToInt(this  string hexstr)
-        {
-            if (hexstr.Length == 2)
-            {
-                return Convert.ToInt32(hexstr, 16);
-            }
-            throw new IndexOutOfRangeException("Can only create int from 2-length hex arrays. String received: " + hexstr);
-        }
-
-        public static T[] SubArray<T>(this T[] data, int index, int length)
-        {
-            var result = new T[length];
-            Array.Copy(data, index, result, 0, length);
-            return result;
         }
     }
 }

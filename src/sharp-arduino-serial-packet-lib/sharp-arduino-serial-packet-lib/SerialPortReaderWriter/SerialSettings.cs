@@ -2,13 +2,13 @@
 using System.ComponentModel;
 using System.IO.Ports;
 
-namespace sharp_arduino_serial_packet_lib
+namespace sharp_arduino_serial_packet_lib.SerialPortReaderWriter
 {
     
         /// <summary>
         /// Class containing properties related to a serial port 
         /// </summary>
-       //Source: http://www.codeproject.com/Articles/75770/Basic-serial-port-listening-application
+       //Original source: http://www.codeproject.com/Articles/75770/Basic-serial-port-listening-application
         public class SerialSettings : INotifyPropertyChanged
         {
             public event PropertyChangedEventHandler PropertyChanged;

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using sharp_arduino_serial_packet_lib;
 
 namespace seriallibtester
@@ -14,7 +10,6 @@ namespace seriallibtester
         {
             try
             {
-
                 r = new SerialReaderWriter(comport: "COM4");
                 r.SerialMessageReceived += r_SerialDataReceived;
                 r.StartListening();
@@ -33,7 +28,7 @@ namespace seriallibtester
         {
 
             Console.WriteLine(e.Packet.ToString());
-            Console.WriteLine("Received:{0} Corrupt: {1}",r.ReceivedPackets, r.CorruptPackets);
+            Console.WriteLine("Received:{0} Corrupt: {1}",r.Statistics.ReceivedPackets, r.Statistics.CorruptPackets);
 
         }
     }

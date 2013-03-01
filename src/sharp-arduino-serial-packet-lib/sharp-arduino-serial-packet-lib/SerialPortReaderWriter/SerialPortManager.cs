@@ -2,12 +2,12 @@
 using System.IO.Ports;
 using System.Reflection;
 
-namespace sharp_arduino_serial_packet_lib
+namespace sharp_arduino_serial_packet_lib.SerialPortReaderWriter
 {
     /// <summary>
     /// Manager for serial port data
     /// </summary>
-    //Source: http://www.codeproject.com/Articles/75770/Basic-serial-port-listening-application
+    //Original source: http://www.codeproject.com/Articles/75770/Basic-serial-port-listening-application
     class SerialPortManager : IDisposable
     {
         public SerialPortManager()

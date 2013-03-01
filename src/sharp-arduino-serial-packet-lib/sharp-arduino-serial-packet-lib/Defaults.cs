@@ -1,12 +1,10 @@
 ﻿namespace sharp_arduino_serial_packet_lib
 {
     //http://www.codeproject.com/Articles/75770/Basic-serial-port-listening-application 
-    public class Defines
+    public class Defaults
     {
         public const int DEFAULT_BAUDRATE = 115200;
     }
-
-    //Sensor types:
     public enum SensorTypes
     {
 
@@ -27,7 +25,6 @@
         BRAKE_MOTOR_B = 0x18
     }
     public enum PacketFields { Type, NodeID, SensorID, CommandID, Payload, Parity }
-
     public enum PacketTypes { Command = 0x01, Command_Reply = 0x02, Data_Request = 0x11, Data_Byte = 0x12, Data_Int = 0x13, Data_Array_Request = 0x21, Data_Array = 0x22 }
 
 }
