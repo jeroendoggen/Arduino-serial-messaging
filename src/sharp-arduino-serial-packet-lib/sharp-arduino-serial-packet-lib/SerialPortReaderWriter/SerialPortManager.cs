@@ -106,11 +106,11 @@ namespace sharp_arduino_serial_packet_lib.SerialPortReaderWriter
         /// Send serial byte array to serialport
         /// </summary>
         /// <param name="data"></param>
-        public void SendSerialData(byte[] data)
+        public void SendSerialData(string data)
         {
             if (_serialPort != null && _serialPort.IsOpen)
             {
-                _serialPort.Write(data, 0, data.Length); //Should be done on other thread?
+                _serialPort.WriteLine(data);
                 //TODO: http://www.ibiliskov.info/2011/05/net-serialport-pitfalls/
             }
             else

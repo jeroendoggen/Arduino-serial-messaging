@@ -14,6 +14,12 @@ namespace sharp_arduino_serial_packet_lib
             throw new IndexOutOfRangeException("Can only create int from 2-length hex arrays. String received: " + hexstr);
         }
 
+        public static string FromIntToHexString(this  int hexstr)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
             var result = new T[length];

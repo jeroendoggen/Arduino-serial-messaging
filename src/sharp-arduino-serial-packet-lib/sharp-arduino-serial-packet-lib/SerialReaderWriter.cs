@@ -87,9 +87,6 @@ namespace sharp_arduino_serial_packet_lib
         private void ParseData(string packetStr)
         {
 
-
-            // var packetStr = Encoding.ASCII.GetString(p);//.Replace(Environment.NewLine, null);
-
             Debug.WriteLine("New packet:\t string:" + packetStr);
 
             for (int i = 0; i < packetStr.Length; i++)
@@ -163,11 +160,19 @@ namespace sharp_arduino_serial_packet_lib
 
         #region Send methods
 
-       public void SendMessage(Packet pcktosend)
+        private void SendPacket(PacketTypes ptype, int nodeId, int sensorID, Commands command, int payload)
         {
-            spManager.SendSerialData(pcktosend.ToByteArray());
-        }
+            Packet res= new Packet();
+            res.PacketType = ptype;
+            res.NodeID = nodeId;
+            res.SensorID = sensorID;
+            res.CommandID = command;
+            res.Payload = payload;
+            res.Parity = ComputeParity(); //TODO
 
+            spManager.SendSerialData(res.ToStringMessageArray());
+            
+        }
         #endregion
 
         #region Dispose
