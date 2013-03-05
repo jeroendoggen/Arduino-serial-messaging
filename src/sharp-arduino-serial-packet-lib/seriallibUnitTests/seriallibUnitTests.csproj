@@ -50,6 +50,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="..\sharp-arduino-serial-packet-lib\ExtensionsMethods.cs">
+      <Link>ExtensionsMethods.cs</Link>
+    </Compile>
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

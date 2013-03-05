@@ -22,6 +22,21 @@ namespace sharp_arduino_serial_packet_lib
             
         }
 
+        public override bool Equals(object obj)
+        {
+            Packet inco = obj as Packet;
+            if (inco != null)
+            {
+                if (inco.Parity == this.Parity)
+                {
+                    if (inco.NodeID == this.NodeID && inco.PacketType == this.PacketType && inco.Payload == this.Payload &&
+                        inco.SensorID == this.SensorID)
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public string ToStringMessageArray()
         {
             StringBuilder res = new StringBuilder();
