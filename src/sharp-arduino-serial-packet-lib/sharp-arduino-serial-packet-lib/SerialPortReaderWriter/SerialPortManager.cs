@@ -75,7 +75,7 @@ namespace sharp_arduino_serial_packet_lib.SerialPortReaderWriter
         /// <summary>
         /// Connects to a serial port defined through the current settings
         /// </summary>
-        public void StartListening()
+        public void StartUsingPort()
         {
             // Closing serial port if it is open
             if (_serialPort != null && _serialPort.IsOpen)
@@ -97,9 +97,26 @@ namespace sharp_arduino_serial_packet_lib.SerialPortReaderWriter
         /// <summary>
         /// Closes the serial port
         /// </summary>
-        public void StopListening()
+        public void StopUsingPort()
         {
             _serialPort.Close();
+        }
+
+        /// <summary>
+        /// Send serial byte array to serialport
+        /// </summary>
+        /// <param name="data"></param>
+        public void SendSerialData(byte[] data)
+        {
+            if (_serialPort != null && _serialPort.IsOpen)
+            {
+                _serialPort.Write(data, 0, data.Length); //Should be done on other thread?
+                //TODO: http://www.ibiliskov.info/2011/05/net-serialport-pitfalls/
+            }
+            else
+            {
+                throw new Exception("No serial port open. Did you call the StartUsingPort method?");
+            }
         }
 
 

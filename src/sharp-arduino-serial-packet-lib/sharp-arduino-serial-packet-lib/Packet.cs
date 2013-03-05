@@ -19,5 +19,10 @@
                                  "Payload:{4} Parity:{5}\n",PacketType,NodeID,SensorID,CommandID,Payload, Parity, RawString.Trim());
 
         }
+
+        internal byte[] ToByteArray()
+        {
+            throw new System.NotImplementedException();
+        }
     } 
 }

@@ -12,15 +12,14 @@ namespace sharp_arduino_serial_packet_lib
             get { return spManager.CurrentSerialSettings; }
             set { spManager.CurrentSerialSettings = value; }
         }
-
         public Statistics Statistics
         {
             get { return _statistics; }
         }
 
+        
 
-        private readonly SerialPortManager spManager = new SerialPortManager();
-
+        #region Constructors
         public SerialReaderWriter(int baudrate = 115200, string comport = "COM2")
         {
             _statistics = new Statistics();
@@ -34,10 +33,37 @@ namespace sharp_arduino_serial_packet_lib
             spManager.CurrentSerialSettings = settings;
         }
 
+        private readonly SerialPortManager spManager = new SerialPortManager();
+        #endregion
 
-        public event EventHandler<SerialArduinoMessageEventArgs> SerialMessageReceived;
+        private int ComputeParity()
+        {
+            //TODO: compute parity (ask Jeroen)
+            return incomingPacket.Parity;
+        }
 
-        void spManager_NewSerialDataReceived(object sender, SerialDataEventArgs e)
+        #region Receiving methods
+
+        public void StartListening()
+        {
+            if (spManager != null)
+            {
+                spManager.NewSerialDataReceived += OnNewSerialDataReceived;
+                spManager.StartUsingPort();
+            }
+
+        }
+        public void StopListening()
+        {
+            if (spManager != null)
+            {
+                spManager.NewSerialDataReceived -= OnNewSerialDataReceived;
+                spManager.StopUsingPort();
+            }
+        }
+
+        private readonly Statistics _statistics;
+        void OnNewSerialDataReceived(object sender, SerialDataEventArgs e)
         {
             Statistics.ReceivedPackets++;
 
@@ -52,12 +78,12 @@ namespace sharp_arduino_serial_packet_lib
             }
 
         }
+        public event EventHandler<SerialArduinoMessageEventArgs> SerialMessageReceived;
+
+       
 
         private Packet incomingPacket = new Packet();
         private PacketFields currentField;
-        private readonly Statistics _statistics;
-
-
         private void ParseData(string packetStr)
         {
 
@@ -133,49 +159,34 @@ namespace sharp_arduino_serial_packet_lib
             }
 
         }
+        #endregion
 
-        private int ComputeParity()
+        #region Send methods
+
+       public void SendMessage(Packet pcktosend)
         {
-            //TODO: compute parity (ask Jeroen)
-            return incomingPacket.Parity;
+            spManager.SendSerialData(pcktosend.ToByteArray());
         }
 
+        #endregion
 
-        public void StartListening()
-        {
-            if (spManager != null)
-            {
-                spManager.NewSerialDataReceived += spManager_NewSerialDataReceived;
-                spManager.StartListening();
-            }
-           
-        }
-    
-        public void StopListening()
-        {
-            if (spManager != null)
-            {
-                spManager.NewSerialDataReceived -= spManager_NewSerialDataReceived;
-                spManager.StopListening();
-            }
-        }
-
+        #region Dispose
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                spManager.StopListening();
-                spManager.NewSerialDataReceived -= spManager_NewSerialDataReceived;
+                spManager.StopUsingPort();
+                spManager.NewSerialDataReceived -= OnNewSerialDataReceived;
                 spManager.Dispose();
             }
 
         }
-
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+        #endregion
 
 
     }
