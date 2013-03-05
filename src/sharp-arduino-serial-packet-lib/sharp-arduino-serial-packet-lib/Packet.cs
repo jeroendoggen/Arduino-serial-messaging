@@ -22,7 +22,7 @@ namespace sharp_arduino_serial_packet_lib
             
         }
 
-        internal string ToStringMessageArray()
+        public string ToStringMessageArray()
         {
             StringBuilder res = new StringBuilder();
             res.Append('T');

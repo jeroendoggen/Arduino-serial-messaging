@@ -82,9 +82,9 @@ namespace sharp_arduino_serial_packet_lib
 
        
 
-        private Packet incomingPacket = new Packet();
+        public Packet incomingPacket = new Packet();
         private PacketFields currentField;
-        private void ParseData(string packetStr)
+        public void ParseData(string packetStr)
         {
 
             Debug.WriteLine("New packet:\t string:" + packetStr);
@@ -160,7 +160,7 @@ namespace sharp_arduino_serial_packet_lib
 
         #region Send methods
 
-        private void SendPacket(PacketTypes ptype, int nodeId, int sensorID, Commands command, int payload)
+        public void SendPacket(PacketTypes ptype, int nodeId, int sensorID, Commands command, int payload)
         {
             Packet res= new Packet();
             res.PacketType = ptype;
