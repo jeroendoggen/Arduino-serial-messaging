@@ -96,5 +96,6 @@ class SerialPacket
     void printInfo();
     boolean checkParity();
     boolean newPacket;
+    boolean validatePacketFields();
 };
 #endif
