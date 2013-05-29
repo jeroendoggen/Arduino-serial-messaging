@@ -289,6 +289,7 @@ boolean SerialPacket::readSerialData()
   while (Serial.available() && _inputChar[_incomingCounter] != '\n' ) {
     _inputChar[_incomingCounter]=(char)Serial.read();
     _incomingCounter++;
+    // This checks for a minimum lenght (longer is also ok.. problem?)
     if (_incomingCounter == 16) {
       newPacket = true;
     }
@@ -299,9 +300,6 @@ boolean SerialPacket::readSerialData()
 
   //   parseSerialData();
   // Does not work when parsing is called in the return statement
-  #ifdef DEBUG_SERIAL
-  printInfo();
-  #endif
   _incomingCounter=0;
   return (parseSerialData());
 }
@@ -313,10 +311,9 @@ boolean SerialPacket::readSerialData()
 boolean SerialPacket::parseSerialData()
 {
   incomingPacket.packetType = hex_to_dec(_inputChar[1])*16 + hex_to_dec(_inputChar[2]);
+  
   incomingPacket.nodeID = hex_to_dec(_inputChar[4])*16 + hex_to_dec(_inputChar[5]);
   incomingPacket.payload = hex_to_dec(_inputChar[10])*16 + hex_to_dec(_inputChar[11]);
-  //Serial.print("Type: ");
-  //Serial.print(incomingPacket.packetType);
   // casting error hex vs decimal (in if)
   if ((incomingPacket.packetType == COMMAND) | (incomingPacket.packetType == COMMAND_REPLY)) {
     //Serial.println("parseSerialData");
@@ -329,7 +326,11 @@ boolean SerialPacket::parseSerialData()
     _checkedParity = incomingPacket.packetType^incomingPacket.nodeID^incomingPacket.sensorID^incomingPacket.payload;
   }
   incomingPacket.parity = hex_to_dec(_inputChar[13])*16 + hex_to_dec(_inputChar[14]);
-
+ 
+  #ifdef DEBUG_SERIAL
+  printInfo();
+  #endif
+  
   if (newPacket) {
     newPacket=false;
     return checkParity();
@@ -397,6 +398,7 @@ boolean SerialPacket::checkParity()
   if (_checkedParity == incomingPacket.parity){
     #ifdef DEBUG_SERIAL
     Serial.println("Parity ok");
+    Serial.println("----------------");
     #endif
     return true;
   }
