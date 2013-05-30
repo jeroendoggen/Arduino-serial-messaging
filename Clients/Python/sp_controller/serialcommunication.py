@@ -47,7 +47,7 @@ class SerialCommunication(threading.Thread):
         while True:
             time.sleep(self.sleeptime)
 #            print(self.identification)
-            if self.identification == "Packet_receiver    ":
+            if self.identification == "Packet_receiver":
                 self.get_packet()
             if self.identification == "Command_transmitter":
                 self.send_commands()
@@ -67,7 +67,8 @@ class SerialCommunication(threading.Thread):
             self.ser.flush()
             self.logger.info(self.identification
                              + " : Connected to serial port: "
-              + serial_port + " with speed:" + str(baudrate))
+                             + serial_port
+                             + " with speed:" + str(baudrate))
             print(self.identification
                   + " : connected to serial port: ", end="")
             print(serial_port, end="")
@@ -75,7 +76,9 @@ class SerialCommunication(threading.Thread):
             print(baudrate)
         except:
             self.logger.critical("Unable to connect to serial port: "
-              + serial_port + " with speed:" + str(baudrate))
+                                 + serial_port
+                                 + " with speed:"
+                                 + str(baudrate))
             print("Unable to connect to serial port: ", end="")
             print(serial_port, end="")
             print(" with speed: ", end="")
@@ -101,23 +104,25 @@ class SerialCommunication(threading.Thread):
     def get_packet(self):
         """Get one serial packet (one line of data)"""
         packet = self.read_line()[:-1]
-        print("Incoming packet: " + packet) # Print packet (HEX format)
+        print("Incoming packet: " + packet)  # Print packet (HEX format)
         packet = self.parser.parse(packet)
-        print(packet) # Print out all info about the packet (human readable)
-        print("")     # Print empty line
+        print(packet)  # Print out all info about the packet (human readable)
+        print("")      # Print empty line
         if packet != 0:
             self.sensordata_queue.put(packet)
 
     def send_commands(self):
         """Send commands from the queue to the serial ports"""
+        self.send_command(0x11, 0x11, 0x17)
         if not self.cmd_queue.empty():
             command = self.cmd_queue.get()
 #            self.cmd_queue.join
             self.send_command(command)
+            
 #            print(command)
 
-    def send_command(self, value):
-        """Send a command packet"""
+    def send_old_command(self, value):
+        """Send a command packet: compatible with command queue (deprecated: june 2013)"""
 #        print(value)
         value = map(int, value)  # convert command elements in list to int
 #        print(value)
@@ -136,3 +141,36 @@ class SerialCommunication(threading.Thread):
             self.ser.write("T01N00I12P" + str(value) + "Q"
                            + str(parity) + "\r")
             print("Command for Arduino:   " + str(value), "HEX")
+
+    def send_command(self, command_id, payload, node_id):
+        """Send a command packet"""
+        # Debug info:
+        print("Sending command: ", command_id)
+        print("Sending payload: ", payload)
+        print("Sending node_id: ", node_id)
+        
+        # Calculate parity field:
+        parity = 0x01 ^ node_id ^ command_id ^ payload
+ 
+        # Convert to hex
+        command_id = self.hex_converter(command_id)
+        payload = self.hex_converter(payload)
+        node_id = self.hex_converter(node_id)
+
+        # Create packet
+        packet = "T01" + "N" + str(node_id) + "I" + str(command_id) + "P" + str(payload) + "Q" + str(parity) 
+        print(packet)
+        print("")
+        
+    def hex_converter(self, value):
+        # print("Input: ", end="")
+        # print(value)
+        value = hex(value)
+        value = value[2:4]
+        if (int(value,16) < 16):
+            value = "0" + value
+        # print("Output: ", end="")
+        # print(value)
+        return(value)
+        
+         

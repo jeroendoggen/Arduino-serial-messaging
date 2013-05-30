@@ -20,15 +20,7 @@ from sp_controller.__init__ import __version__
 
 DEFAULT_PORT = "/dev/ttyUSB0"
 DEFAULT_BAUDRATE = 115200
-DEFAULT_DATABASE = "ltproject"
-DEFAULT_DB_USERNAME = "ltuser"
-DEFAULT_DB_PASSWORD = "fulfil-it"
-DEFAULT_HOSTNAME = "127.0.0.1"
-DEFAULT_LOGFILE = "lt_controller.log"
-DEFAULT_POLLING_SLEEPTIME = 2
-DEFAULT_SENSOR_PUSHING_SLEEPTIME = 10
-DEFAULT_COMMAND_PUSHING_SLEEPTIME = 0.1
-DEFAULT_ERASING_SLEEPTIME = 60
+DEFAULT_LOGFILE = "sp_controller.log"
 DEFAULT_SERIAL_READ_SLEEPTIME = 0.1
 DEFAULT_SERIAL_WRITE_SLEEPTIME = 0.3
 #keep this around 0.5 (Arduino gets confused!! (buffer overflow?)
@@ -47,7 +39,6 @@ class Settings:
     path = DEFAULT_PATH
     logfile = path + DEFAULT_LOGFILE
 
-    polling_sleeptime = DEFAULT_POLLING_SLEEPTIME
     serial_read_sleeptime = DEFAULT_SERIAL_READ_SLEEPTIME
     serial_write_sleeptime = DEFAULT_SERIAL_WRITE_SLEEPTIME
 
