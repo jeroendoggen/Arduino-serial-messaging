@@ -44,13 +44,19 @@ class SerialCommunication(threading.Thread):
 
     def run(self):
         """This function will be called when the thread starts"""
+        payload_counter = 0
         while True:
             time.sleep(self.sleeptime)
 #            print(self.identification)
             if self.identification == "Packet_receiver":
                 self.get_packet()
             if self.identification == "Command_transmitter":
-                self.send_commands()
+                # Just send some dummy packets (with a counter for the payload)
+                if (payload_counter is 255):
+                    payload_counter = 0
+                self.send_command(0x11, payload_counter, 0x12)
+                payload_counter = payload_counter + 1
+                #self.send_commands()
 
     def check_baudrate(self, baudrate):
         """TODO: implement this (now the program hangs on invalid baudrates)"""
@@ -113,7 +119,6 @@ class SerialCommunication(threading.Thread):
 
     def send_commands(self):
         """Send commands from the queue to the serial ports"""
-        self.send_command(0x11, 0x11, 0x17)
         if not self.cmd_queue.empty():
             command = self.cmd_queue.get()
 #            self.cmd_queue.join
@@ -145,12 +150,13 @@ class SerialCommunication(threading.Thread):
     def send_command(self, command_id, payload, node_id):
         """Send a command packet"""
         # Debug info:
-        print("Sending command: ", command_id)
-        print("Sending payload: ", payload)
-        print("Sending node_id: ", node_id)
+        print("Command: ", self.hex_converter(command_id))
+        print("Payload: ", self.hex_converter(payload))
+        print("Node_id: ", self.hex_converter(node_id))
         
         # Calculate parity field:
         parity = 0x01 ^ node_id ^ command_id ^ payload
+        parity = self.hex_converter(parity)
  
         # Convert to hex
         command_id = self.hex_converter(command_id)
@@ -158,8 +164,11 @@ class SerialCommunication(threading.Thread):
         node_id = self.hex_converter(node_id)
 
         # Create packet
-        packet = "T01" + "N" + str(node_id) + "I" + str(command_id) + "P" + str(payload) + "Q" + str(parity) 
+        packet = "T01" + "N" + str(node_id) + "I" + str(command_id) + "P" + str(payload) + "Q" + str(parity) + "\r" 
         print(packet)
+        
+        # Send packet
+        self.ser.write(packet)
         print("")
         
     def hex_converter(self, value):
