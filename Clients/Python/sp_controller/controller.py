@@ -25,11 +25,13 @@ class QueueSetting:
 
 class Controller:
     """Controller class: does the core of the work"""
+    sensordata_queue = Queue()
+    cmd_reply_queue = Queue()
+    cmd_queue = Queue()
+    payload_counter = 0 
+    
     def __init__(self):
         """ Initialize the controller """
-        self.sensordata_queue = Queue()
-        self.cmd_reply_queue = Queue()
-        self.cmd_queue = Queue()
         self.queue_settings = QueueSetting(self.sensordata_queue,
                                            self.cmd_reply_queue,
                                            self.cmd_queue)
@@ -44,10 +46,20 @@ class Controller:
         self.start_serial_communication_threads()
         while True:
             try:
-                time.sleep(100)
+                time.sleep(2)
+                self.send_command()
             except KeyboardInterrupt:
                 print("Program stopped by keyboard interrupt")
                 sys.exit(1)
+                
+    def send_command(self):
+        # Just send some dummy packets (with a counter for the payload)           
+        self.cmd_queue.put((1, self.payload_counter, 2))
+        print("A command has been placed in the queue")
+        
+        self.payload_counter += 1 
+        if (self.payload_counter is 255):
+            self.payload_counter = 0
 
     def start_serial_communication_threads(self):
         """Start serial communication thread"""

@@ -22,7 +22,7 @@ DEFAULT_PORT = "/dev/ttyUSB0"
 DEFAULT_BAUDRATE = 115200
 DEFAULT_LOGFILE = "sp_controller.log"
 DEFAULT_SERIAL_READ_SLEEPTIME = 0.1
-DEFAULT_SERIAL_WRITE_SLEEPTIME = 2
+DEFAULT_SERIAL_WRITE_SLEEPTIME = 0.1
 #keep this around 0.5 (Arduino gets confused!! (buffer overflow?)
 DEFAULT_PATH = os.getcwd() + "/"
 

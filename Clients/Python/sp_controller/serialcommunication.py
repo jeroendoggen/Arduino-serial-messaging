@@ -44,19 +44,13 @@ class SerialCommunication(threading.Thread):
 
     def run(self):
         """This function will be called when the thread starts"""
-        payload_counter = 0
         while True:
             time.sleep(self.sleeptime)
 #            print(self.identification)
             if self.identification == "Packet_receiver":
                 self.get_packet()
             if self.identification == "Command_transmitter":
-                # Just send some dummy packets (with a counter for the payload)
-                if (payload_counter is 255):
-                    payload_counter = 0
-                self.send_command(0x11, payload_counter, 0x12)
-                payload_counter = payload_counter + 1
-                #self.send_commands()
+                self.send_commands()
 
     def check_baudrate(self, baudrate):
         """TODO: implement this (now the program hangs on invalid baudrates)"""
@@ -121,8 +115,12 @@ class SerialCommunication(threading.Thread):
         """Send commands from the queue to the serial ports"""
         if not self.cmd_queue.empty():
             command = self.cmd_queue.get()
-#            self.cmd_queue.join
-            self.send_command(command)
+            #print(command)
+            #self.cmd_queue.join
+            command_id = command[0]
+            payload = command[1]
+            node_id = command[2]
+            self.send_command(command_id, payload, node_id)
             
 #            print(command)
 
