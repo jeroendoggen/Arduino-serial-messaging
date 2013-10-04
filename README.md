@@ -46,10 +46,3 @@ Example sketch: SendPackets.ino
  * Packet_Inspector_processing Packet Inspector
  * PythonLibrary Python library
  * C# library
-
-
-##  Contribute
-
- * http://arduinolibraries.uservoice.com Suggest and vote for enhancements
- * Log a defect
- * Help develop a new implementation in an other language and/or on an other platform
