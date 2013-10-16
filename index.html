@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Arduino-serial-messaging : Library to exchange short messages (sensordata, commands) between an Arduino and a software application running on a PC. (Linux, embedded Linux, Windows, OS X)" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Arduino-serial-messaging</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jeroendoggen/Arduino-serial-messaging">View on GitHub</a>
+
+          <h1 id="project_title">Arduino-serial-messaging</h1>
+          <h2 id="project_tagline">Library to exchange short messages (sensordata, commands) between an Arduino and a software application running on a PC. (Linux, embedded Linux, Windows, OS X)</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jeroendoggen/Arduino-serial-messaging/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jeroendoggen/Arduino-serial-messaging/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="arduino-serial-messaging" class="anchor" href="#arduino-serial-messaging"><span class="octicon octicon-link"></span></a>Arduino-serial-messaging</h1>
+
+<p>Library to exchange short messages (sensordata, commands) between an Arduino and a software application running on a PC. (Linux, embedded Linux, Windows, OS X) (clients currently under development)</p>
+
+<p>Both sides are able send and receive a range of "standardised" messages over the serial port. All communication is done by sending short human readable ASCII messages. We define several standard command and data packet IDs to provide interoperability between different applications.</p>
+
+<h2>
+<a name="the-message-types" class="anchor" href="#the-message-types"><span class="octicon octicon-link"></span></a>The Message Types</h2>
+
+<p>The library support seven basic packet types.</p>
+
+<ul>
+<li>"Command": start motor, blink LED, go to sleep mode,...</li>
+<li>"Command Reply": e.g. motor started, LED blinking, going to sleep mode now,...</li>
+<li>"8-bit Data": (standard Arduino Byte type): e.g. temperature is 25 C, distance is 50 cm, humidity is 56%</li>
+<li>"16-bit Data": (standard Arduino int type): e.g. temperature is -25 C, distance is 310 cm, time is 16200 seconds, ...</li>
+<li>"Data array": send multiple sensor measurements in one burst (useful when sampling very rapidly)</li>
+<li>"Data request": e.g. send me the temperature, distance, humidity, ...</li>
+<li>"Data array request": e.g. send me a burst of measurements</li>
+</ul><p>More info in "defines.h"</p>
+
+<h2>
+<a name="standard-messages" class="anchor" href="#standard-messages"><span class="octicon octicon-link"></span></a>Standard Messages</h2>
+
+<p><em>Data messages</em> are used when we want to send sensor data from the Arduino to applications running on a PCs. [<a href="http://code.google.com/p/arduino-serial-packet/wiki/Sensordata">http://code.google.com/p/arduino-serial-packet/wiki/Sensordata</a> More info]</p>
+
+<p><em>Command messages</em> are used when we want to send instructions from one application to the Arduino module. [<a href="http://code.google.com/p/arduino-serial-packet/wiki/Commands">http://code.google.com/p/arduino-serial-packet/wiki/Commands</a> More info]</p>
+
+<p>We define several standard command and data messages IDs. The actual meaning of the payload of these messages is standardised to provide interoperability between different applications (00h -&gt; 7Fh). Half of the packet IDs are undefined (80h-&gt;FFh), these IDs can be chosen based on the needs of your own application.</p>
+
+<h2>
+<a name="sending-messages-from-arduino-code" class="anchor" href="#sending-messages-from-arduino-code"><span class="octicon octicon-link"></span></a>Sending Messages from Arduino Code</h2>
+
+<ul>
+<li>sendCommand(commandID,payload)</li>
+<li><p>sendCommandReply(commandID,payload)</p></li>
+<li><p>sendData(sensorID,payload)</p></li>
+<li><p>sendDataRequest(sensorID,payload)</p></li>
+<li><p>sendDataArray(sensorID,payload)</p></li>
+<li><p>sendDataArrayRequest(sensorID,payload)</p></li>
+</ul><p>Example sketch: SendPackets.ino</p>
+
+<h2>
+<a name="pc-clients" class="anchor" href="#pc-clients"><span class="octicon octicon-link"></span></a>PC Clients</h2>
+
+<ul>
+<li>Sensorlogging with collectd</li>
+<li>Packet_Inspector_processing Packet Inspector</li>
+<li>PythonLibrary Python library</li>
+<li>C# library</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Arduino-serial-messaging maintained by <a href="https://github.com/jeroendoggen">jeroendoggen</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
