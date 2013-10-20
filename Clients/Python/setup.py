@@ -10,7 +10,7 @@ from distutils.core import setup
 from sp_controller import __version__
 
 
-with open('README.txt') as readme_file:
+with open('README.md') as readme_file:
     LONG_DESCRIPTION = readme_file.read()
 
 setup(name='sp_Controller',
