@@ -16,15 +16,15 @@ The library support seven basic packet types.
  * "Data request": e.g. send me the temperature, distance, humidity, ...
  * "Data array request": e.g. send me a burst of measurements
 
-More info in "defines.h"
+More info in [`defines.h`](https://github.com/jeroendoggen/Arduino-serial-messaging/blob/master/SerialPacket/defines.h)
 
 ## Standard Messages
 
-*Data messages* are used when we want to send sensor data from the Arduino to applications running on a PCs. [http://code.google.com/p/arduino-serial-packet/wiki/Sensordata More info]
+*Data messages* are used when we want to send sensor data from the Arduino to applications running on a PC. [More info](https://github.com/jeroendoggen/Arduino-serial-messaging/wiki/Sensordata-messages)
 
-*Command messages* are used when we want to send instructions from one application to the Arduino module. [http://code.google.com/p/arduino-serial-packet/wiki/Commands More info]
+*Command messages* are used when we want to send instructions from one application to the Arduino module. [More info](https://github.com/jeroendoggen/Arduino-serial-messaging/wiki/Command-messages)
 
-We define several standard command and data messages IDs. The actual meaning of the payload of these messages is standardised to provide interoperability between different applications (00h -> 7Fh). Half of the packet IDs are undefined (80h->FFh), these IDs can be chosen based on the needs of your own application.
+We define several standard command and data message IDs. The actual meaning of the payload of these messages is standardised to provide interoperability between different applications (00h -> 7Fh). Half of the packet IDs are undefined (80h -> FFh). These IDs can be chosen based on the needs of your own application.
 
 
 ## Sending Messages from Arduino Code
@@ -38,7 +38,7 @@ We define several standard command and data messages IDs. The actual meaning of 
  * sendDataArray(sensorID,payload)
  * sendDataArrayRequest(sensorID,payload)
 
-Example sketch: SendPackets.ino
+Example sketch: [`SendPackets.ino`](https://github.com/jeroendoggen/Arduino-serial-messaging/blob/master/SerialPacket/examples/SendPackets/SendPackets.ino)
 
 ## PC Clients
 
