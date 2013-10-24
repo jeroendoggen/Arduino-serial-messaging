@@ -6,7 +6,7 @@ The protocol was designed to be relatively easy to comprehend and process by bot
  * A standardised message structure (more info below)
  * All fields in a message are separated by delimiters (just a letter indicating what the next field will be)
  * All communication is in HEX ASCII values (to allow human and computer to understand the packets)
- * Invalid messages are detected by calulating the parity (XOR all serial bytes) 
+ * Invalid messages are detected by calculating the parity (XOR all serial bytes) 
 
 ## The Message Types
 
