@@ -32,13 +32,20 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a name="arduino-serial-messaging" class="anchor" href="#arduino-serial-messaging"><span class="octicon octicon-link"></span></a>Arduino-serial-messaging</h1>
+<a name="arduino-serial-messaging" class="anchor" href="#arduino-serial-messaging"><span class="octicon octicon-link"></span></a>Arduino serial messaging</h1>
 
 <p>Library to exchange short messages (sensordata, commands) between an Arduino and a software application running on a PC. (Linux, embedded Linux, Windows, OS X) (clients currently under development)</p>
 
 <p>Both sides are able send and receive a range of "standardised" messages over the serial port. All communication is done by sending short human readable ASCII messages. We define several standard command and data packet IDs to provide interoperability between different applications.</p>
 
-<h2>
+<p>The protocol was designed to be relatively easy to comprehend and process by both human and computer.</p>
+
+<ul>
+<li>A standardised message structure (more info below)</li>
+<li>All fields in a message are separated by delimiters (just a letter indicating what the next field will be)</li>
+<li>All communication is in HEX ASCII values (to allow human and computer to understand the packets)</li>
+<li>Invalid messages are detected by calulating the parity (XOR all serial bytes) </li>
+</ul><h2>
 <a name="the-message-types" class="anchor" href="#the-message-types"><span class="octicon octicon-link"></span></a>The Message Types</h2>
 
 <p>The library support seven basic packet types.</p>
@@ -51,16 +58,16 @@
 <li>"Data array": send multiple sensor measurements in one burst (useful when sampling very rapidly)</li>
 <li>"Data request": e.g. send me the temperature, distance, humidity, ...</li>
 <li>"Data array request": e.g. send me a burst of measurements</li>
-</ul><p>More info in "defines.h"</p>
+</ul><p>More info in <a href="https://github.com/jeroendoggen/Arduino-serial-messaging/blob/master/SerialPacket/defines.h"><code>defines.h</code></a></p>
 
 <h2>
 <a name="standard-messages" class="anchor" href="#standard-messages"><span class="octicon octicon-link"></span></a>Standard Messages</h2>
 
-<p><em>Data messages</em> are used when we want to send sensor data from the Arduino to applications running on a PCs. [<a href="http://code.google.com/p/arduino-serial-packet/wiki/Sensordata">http://code.google.com/p/arduino-serial-packet/wiki/Sensordata</a> More info]</p>
+<p><em>Data messages</em> are used when we want to send sensor data from the Arduino to applications running on a PC. <a href="https://github.com/jeroendoggen/Arduino-serial-messaging/wiki/Sensordata-messages">More info</a></p>
 
-<p><em>Command messages</em> are used when we want to send instructions from one application to the Arduino module. [<a href="http://code.google.com/p/arduino-serial-packet/wiki/Commands">http://code.google.com/p/arduino-serial-packet/wiki/Commands</a> More info]</p>
+<p><em>Command messages</em> are used when we want to send instructions from one application to the Arduino module. <a href="https://github.com/jeroendoggen/Arduino-serial-messaging/wiki/Command-messages">More info</a></p>
 
-<p>We define several standard command and data messages IDs. The actual meaning of the payload of these messages is standardised to provide interoperability between different applications (00h -&gt; 7Fh). Half of the packet IDs are undefined (80h-&gt;FFh), these IDs can be chosen based on the needs of your own application.</p>
+<p>We define several standard command and data message IDs. The actual meaning of the payload of these messages is standardised to provide interoperability between different applications (00h -&gt; 7Fh). Half of the packet IDs are undefined (80h -&gt; FFh). These IDs can be chosen based on the needs of your own application.</p>
 
 <h2>
 <a name="sending-messages-from-arduino-code" class="anchor" href="#sending-messages-from-arduino-code"><span class="octicon octicon-link"></span></a>Sending Messages from Arduino Code</h2>
@@ -72,16 +79,20 @@
 <li><p>sendDataRequest(sensorID,payload)</p></li>
 <li><p>sendDataArray(sensorID,payload)</p></li>
 <li><p>sendDataArrayRequest(sensorID,payload)</p></li>
-</ul><p>Example sketch: SendPackets.ino</p>
+</ul><p>Example sketch: <a href="https://github.com/jeroendoggen/Arduino-serial-messaging/blob/master/SerialPacket/examples/SendPackets/SendPackets.ino"><code>SendPackets.ino</code></a></p>
 
 <h2>
 <a name="pc-clients" class="anchor" href="#pc-clients"><span class="octicon octicon-link"></span></a>PC Clients</h2>
 
 <ul>
-<li>Sensorlogging with collectd</li>
-<li>Packet_Inspector_processing Packet Inspector</li>
-<li>PythonLibrary Python library</li>
-<li>C# library</li>
+<li>
+<a href="https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients/Python">Python library</a>: receive &amp; send packets (using queues &amp; threads)</li>
+<li>
+<a href="https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients">C# library</a>: send &amp; receive messages (coming soon)</li>
+<li>
+<a href="https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients/Collectd">RRDTool sensorlogging</a>: write Arduino sensor data into an RRDtool database using collectd</li>
+<li>
+<a href="https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients/Processing">Packet Inspector</a>: a GUI written in the Processing language to show a incoming data packets</li>
 </ul>
       </section>
     </div>
