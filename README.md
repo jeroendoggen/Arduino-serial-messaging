@@ -48,7 +48,7 @@ Example sketch: [`SendPackets.ino`](https://github.com/jeroendoggen/Arduino-seri
 
 ## PC Clients
 
- * Python library: receive & send packets (using queue's & threads)
- * C# library: send & receive messages
- * RRDTool sensorlogging: write Arduino sensor data into an RRDtool database using collectd
- * Packet Inspector: a GUI written in the Processing language to show a incoming data packets
+ * [Python library](https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients/Python): receive & send packets (using queues & threads)
+ * [C# library](https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients): send & receive messages (coming soon)
+ * [RRDTool sensorlogging](https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients/Collectd): write Arduino sensor data into an RRDtool database using collectd
+ * [Packet Inspector](https://github.com/jeroendoggen/Arduino-serial-messaging/tree/master/Clients/Processing): a GUI written in the Processing language to show a incoming data packets
