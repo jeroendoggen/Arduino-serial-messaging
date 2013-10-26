@@ -1,5 +1,0 @@
-﻿http://stackoverflow.com/questions/10501376/thread-safe-buffer-for-net
-
-DOEN! http://stackoverflow.com/questions/8286503/c-sharp-how-to-place-serial-input-data-into-a-queue-and-de-que-using-a-backgroun 
-
-http://stackoverflow.com/questions/7687379/c-sharp-usb-parsing-of-a-urb-bulk-or-interrupt-transfer-packet
