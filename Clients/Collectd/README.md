@@ -26,7 +26,7 @@ Screenhot shows: (sensing interval: 10 seconds)
 
 ## Links
 
-[RRDtool](http://oss.oetiker.ch/rrdtool/): Industry standard, high performance data logging and graphing system for time series data.
-[Nagios](http://www.nagios.org/): IT Infrastructure Monitoring
-[KCollectd](http://www.forwiss.uni-passau.de/~berberic/Linux/kcollectd.html): a KDE-based application for displaying RRD data collected by collectd
-[writing collectd plugins](http://support.rightscale.com/12-Guides/RightScale_101/08-Management_Tools/Monitoring_System/Writing_custom_collectd_plugins/Custom_Collectd_Plug-ins_for_Linux)
+ * [RRDtool](http://oss.oetiker.ch/rrdtool/): Industry standard, high performance data logging and graphing system for time series data.
+ * [Nagios](http://www.nagios.org/): IT Infrastructure Monitoring
+ * [KCollectd](http://www.forwiss.uni-passau.de/~berberic/Linux/kcollectd.html): a KDE-based application for displaying RRD data collected by collectd
+ * [writing collectd plugins](http://support.rightscale.com/12-Guides/RightScale_101/08-Management_Tools/Monitoring_System/Writing_custom_collectd_plugins/Custom_Collectd_Plug-ins_for_Linux)
