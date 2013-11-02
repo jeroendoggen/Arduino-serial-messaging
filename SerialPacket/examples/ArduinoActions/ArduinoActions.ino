@@ -1,7 +1,7 @@
 // ReceivePackets.ino - Demo application to receive data and command messages
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
-// Warning: this code is untested (not sure if it compiles...)
+// Warning: this code is untested (it compiles, but not tested on hardware)
 
 #include "SerialPacket.h"
 #include "defines.h"
@@ -35,9 +35,9 @@ void serialEvent()
 void serialActions(){
   Serial.println("Starting serialActions");
 
-  if (_Packet.getCommandID() == SET_SPEED_MOTOR_A) {
-    int motorSpeed = _Packet.getPayload();
+  if (Packet.getCommandID() == SET_SPEED_MOTOR_A) {
+    int motorSpeed = Packet.getPayload();
     Serial.println("Set the motor speed to value 'motorSpeed'");
-    _Packet.sendData(COMMAND_REPLY,uint8_t(SET_SPEED_MOTOR_A));
+    Packet.sendData(COMMAND_REPLY,uint8_t(SET_SPEED_MOTOR_A));
     }
   }
