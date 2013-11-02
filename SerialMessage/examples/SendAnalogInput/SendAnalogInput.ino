@@ -1,7 +1,7 @@
-#include "SerialPacket.h"
+#include "SerialMessage.h"
 #include "defines.h"
 
-SerialPacket Packet;
+SerialMessage Message;
 
 #define SENSORID 2
 int a=32760 ;
@@ -9,7 +9,7 @@ uint8_t b=0;
 
 void setup()
 {
-  Packet.begin(115200,1);                         //begin(speed,nodeID);
+  Message.begin(115200,1);                         //begin(speed,nodeID);
 }
 
 void loop()
@@ -17,14 +17,14 @@ void loop()
 
   /*Serial.println(a);
   Serial.println(a,HEX);
-  Packet.sendData(SENSORID, a);
+  Message.sendData(SENSORID, a);
 
   Serial.println(b);
   Serial.println(b,HEX);
-  Packet.sendData(SENSORID, b)*/
+  Message.sendData(SENSORID, b)*/
   ;
 
-  Packet.sendDataArrayRequest(10,20);
+  Message.sendDataArrayRequest(10,20);
   delay(1000);                                    // wait for 100 milliseconds
   a++;
   b++;

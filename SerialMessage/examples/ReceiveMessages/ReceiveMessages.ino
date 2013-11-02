@@ -1,4 +1,4 @@
-// ReceivePackets.ino - Demo application to receive data and command messages
+// ReceiveMessages.ino - Demo application to receive data and command messages
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
 // Program flow:
@@ -6,20 +6,20 @@
 // Options:
 //    -
 
-#include "SerialPacket.h"
+#include "SerialMessage.h"
 #include "defines.h"
 
-SerialPacket Packet;
+SerialMessage Message;
 
 void setup()
 {
-  Packet.begin(115200,0);                         //begin(speed,nodeID);
+  Message.begin(115200,0);                         //begin(speed,nodeID);
 }
 
 void loop()
 {
   delay(500);
-  //    Packet.sendData(1,uint8_t(6));
+  //    Message.sendData(1,uint8_t(6));
 }
 
 /*
@@ -31,5 +31,5 @@ response.  Multiple bytes of data may be available.
 
 void serialEvent()
 {
-  Packet.readSerialData();
+  Message.readSerialData();
 }

@@ -1,20 +1,20 @@
-// SerialPacket.h - Library for sending serial data packets
+// SerialMessage.h - Library for sending serial data messages
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
 // Version History:
-//   Version 0.1: Send single data sample in a packet
-//   Version 0.2: Send arrays with multiple samples in a packet
+//   Version 0.1: Send single data sample in a message
+//   Version 0.2: Send arrays with multiple samples in a message
 //   Version 0.3: Conditional compilation: SERIAL_ASCII vs SERIAL_BINARY (includes.h)
-//   Version 0.4: hexPrinting helper, changed packet types, commandID/packet
-//   Version 0.5: added 'sendCommand', 'sendData', ... functions (replacing the generic 'sendPacket')
+//   Version 0.4: hexPrinting helper, changed message types, commandID/message
+//   Version 0.5: added 'sendCommand', 'sendData', ... functions (replacing the generic 'sendMessage')
 //                removed condition compilation from v0.3
 //                shortened serial ASCII messages ('Type' -> 'T', 'NodeID' -> 'N')
-//   Version 0.6: Added support for packets with 16-bit payload (renamed packet types -> hex values)
-//                Added "dataArrayRequest" packet
-//   Version 0.7: processing incoming packets
+//   Version 0.6: Added support for messages with 16-bit payload (renamed message types -> hex values)
+//                Added "dataArrayRequest" message
+//   Version 0.7: processing incoming messages
 // Roadmap:
 //   Version 0.7: send 16-bit data arrays
-//                Separate classes for commands vs data packets?
+//                Separate classes for commands vs data messages?
 //   Version 0.8: ??
 //
 // This library is free software; you can redistribute it and/or
@@ -31,14 +31,14 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef SerialPacket_h
-#define SerialPacket_h
+#ifndef SerialMessage_h
+#define SerialMessage_h
 #include <Arduino.h>
 
-class SerialPacket
+class SerialMessage
 {
   public:
-    SerialPacket();
+    SerialMessage();
 
     void begin();
     void begin(long speed, uint8_t nodeID);
@@ -62,30 +62,30 @@ class SerialPacket
     uint8_t getPayload();
 
   private:
-    struct packet
+    struct message
     {
-      uint8_t packetType;
+      uint8_t messageType;
       uint8_t nodeID;
       uint8_t sensorID;
       uint8_t commandID;
       uint8_t payload;
       uint8_t parity;
-    } incomingPacket, outgoingPacket;             //TODO: also use this struct to send packets? (todo underscore)
+    } incomingMessage, outgoingMessage;             //TODO: also use this struct to send messages? (todo underscore)
 
-    uint8_t _packetType;
+    uint8_t _messageType;
     uint8_t _nodeID;
     uint8_t _sensorID;
     uint8_t _commandID;
     uint8_t _parity;
     uint8_t _checkedParity;
 
-    boolean _inComingPacketComplete;
+    boolean _inComingMessageComplete;
     char _inputChar[20];
     uint8_t _incomingCounter;
 
-    void sendPacket(uint8_t& payload);
-    void sendPacket(int16_t& payload);
-    void setPacketType(uint8_t type);
+    void sendMessage(uint8_t& payload);
+    void sendMessage(int16_t& payload);
+    void setMessageType(uint8_t type);
     void setCommandID(uint8_t& commandID);
     void setSensorID(uint8_t& sensorID);
     void setNodeID(uint8_t& nodeID);
@@ -95,7 +95,7 @@ class SerialPacket
     boolean parseSerialData();
     void printInfo();
     boolean checkParity();
-    boolean newPacket;
-    boolean validatePacketFields();
+    boolean newMessage;
+    boolean validateMessageFields();
 };
 #endif
