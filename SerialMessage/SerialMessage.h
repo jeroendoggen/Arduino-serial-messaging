@@ -1,22 +1,6 @@
 // SerialMessage.h - Library for sending serial data messages
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
-// Version History:
-//   Version 0.1: Send single data sample in a message
-//   Version 0.2: Send arrays with multiple samples in a message
-//   Version 0.3: Conditional compilation: SERIAL_ASCII vs SERIAL_BINARY (includes.h)
-//   Version 0.4: hexPrinting helper, changed message types, commandID/message
-//   Version 0.5: added 'sendCommand', 'sendData', ... functions (replacing the generic 'sendMessage')
-//                removed condition compilation from v0.3
-//                shortened serial ASCII messages ('Type' -> 'T', 'NodeID' -> 'N')
-//   Version 0.6: Added support for messages with 16-bit payload (renamed message types -> hex values)
-//                Added "dataArrayRequest" message
-//   Version 0.7: processing incoming messages
-// Roadmap:
-//   Version 0.7: send 16-bit data arrays
-//                Separate classes for commands vs data messages?
-//   Version 0.8: ??
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -33,8 +17,19 @@
 
 #ifndef SerialMessage_h
 #define SerialMessage_h
-#include <Arduino.h>
 
+// to be compatible with pre 1.0 Arduino code
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#include <pins_arduino.h>
+#endif
+
+// needed when using abstract classes
+#define __cxa_pure_virtual()
+
+//abstract class SerialMessage
 class SerialMessage
 {
   public:

@@ -48,7 +48,7 @@ SerialMessage::SerialMessage() : _inputChar()
 /// </summary>
 void SerialMessage::begin()
 {
-  begin (DEFAULT_BAUDRATE,DEFAULT_NODEID);
+  begin (DEFAULT_BAUDRATE,0);
 }
 
 /// <summary>
