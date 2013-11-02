@@ -1,4 +1,4 @@
-// Messaging.h - Library for serial messaging
+// Communication.h - Library for serial messaging
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
 // This library is free software; you can redistribute it and/or
@@ -15,8 +15,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef Messaging_h
-#define Messaging_h
+#ifndef Communication_h
+#define Communication_h
 
 // to be compatible with pre 1.0 Arduino code
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -29,13 +29,19 @@
 // needed when using abstract classes
 #define __cxa_pure_virtual()
 
-//abstract class Messaging
-class Messaging
+//abstract class Communication
+class Communication : public Messaging
 {
   public:
     void begin();
 
   private:
-    void setNodeID(uint8_t& nodeID);
+    struct message
+    {
+      uint8_t messageType;
+      uint8_t nodeID;
+      uint8_t payload;
+      uint8_t parity;
+    } Message;
 };
 #endif

@@ -30,7 +30,7 @@
 #define __cxa_pure_virtual()
 
 //abstract class Receiver
-class Receiver : public Messaging
+class Receiver : public Communication
 {
   public:
     boolean readSerialData();

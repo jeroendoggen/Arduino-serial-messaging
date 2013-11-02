@@ -30,7 +30,7 @@
 #define __cxa_pure_virtual()
 
 //abstract class Sender
-class Sender : public Messaging
+class Sender : public Communication
 {
   public:
 

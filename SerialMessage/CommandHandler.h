@@ -1,4 +1,4 @@
-// Messaging.h - Library for serial messaging
+// CommandHandler.h - Library for serial messaging
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
 // This library is free software; you can redistribute it and/or
@@ -15,8 +15,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef Messaging_h
-#define Messaging_h
+// TODO:
+//  - run actions based on incoming command messages
+//  - find an easy way to configure actions (function pointers?)
+
+#ifndef CommandHandler_h
+#define CommandHandler_h
 
 // to be compatible with pre 1.0 Arduino code
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -29,13 +33,13 @@
 // needed when using abstract classes
 #define __cxa_pure_virtual()
 
-//abstract class Messaging
-class Messaging
+//abstract class CommandHandler
+class CommandHandler : public Messaging
 {
   public:
     void begin();
+    void doAction(commandID);
 
   private:
-    void setNodeID(uint8_t& nodeID);
 };
 #endif
