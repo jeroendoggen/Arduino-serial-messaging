@@ -3,6 +3,9 @@
 #define SERIAL_ASCII
 //#define SERIAL_BINARY
 
+//#define DEBUG_SERIAL
+#define DEFAULT_BAUDRATE 115200
+
 #define COMMAND            0x01
 #define COMMAND_REPLY      0x02
 
