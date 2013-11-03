@@ -33,12 +33,12 @@ We define several standard command and data message IDs. The actual meaning of t
 
 ## Example Messages
 
-Command message **T01N00I12PffQ21** : "set motor speed of 'Arduino zero' to +100%:
+Command message **T01N00I12PFFQ21** : "set motor speed of 'Arduino zero' to +100%:
 
  * **T01**: Type      01: Command message
  * **N00**: Number    00: Node number 00 (is the destination)
  * **I12**: CommandID 12: Set motor speed
- * **Pff**: Payload   ff: full speed (range: 0 (reverse) -> 80 (stopped) -> ff (forward))
+ * **PFF**: Payload   FF: full speed (range: 0 (reverse) -> 80 (stopped) -> FF (forward))
  * **Q21**: Quality   21: parity byte is 21
 
 Data message **T12N00I10P08Q0A** : "temperature of 'Arduino zero' is 8 degrees"
