@@ -31,6 +31,25 @@ More info in [`defines.h`](https://github.com/jeroendoggen/Arduino-serial-messag
 We define several standard command and data message IDs. The actual meaning of the payload of these messages is standardised to provide interoperability between different applications (00h -> 7Fh). Half of the packet IDs are undefined (80h -> FFh). These IDs can be chosen based on the needs of your own application.
 
 
+## Example Messages
+
+Command message **T01N00I12PFFQ21** : "set motor speed of 'Arduino zero' to +100%:
+
+ * **T01**: Type      01: Command message
+ * **N00**: Number    00: Node number 00 (is the destination)
+ * **I12**: CommandID 12: Set motor speed
+ * **PFF**: Payload   FF: full speed (range: 0 (reverse) -> 80 (stopped) -> FF (forward))
+ * **Q21**: Quality   21: parity byte is 21
+
+Data message **T12N00I10P08Q0A** : "temperature of 'Arduino zero' is 8 degrees"
+
+ * **T12**: Type      12: Data message (1 byte payload)
+ * **N00**: Number    00: Node number 00 (is the source)
+ * **I10**: SensorID  10: Temperature
+ * **P08**: Payload   08: 8 degrees
+ * **Q0A**: Quality   0A: parity byte is 0A
+
+
 ## Sending Messages from Arduino Code
 
  * sendCommand(commandID,payload)
