@@ -1,7 +1,7 @@
 // ReceiveMessages.ino - Demo application to receive data and command messages
 // Copyright 2012 Jeroen Doggen (jeroendoggen@gmail.com)
 //
-// Warning: this code is untested (not sure if it compiles...)
+// Warning: this code is untested (it compiles, but not tested on hardware)
 
 #include "SerialMessage.h"
 #include "defines.h"
